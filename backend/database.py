@@ -21,3 +21,12 @@ class Medicine(Base):
 
 def init_db():
     Base.metadata.create_all(bind=engine)
+
+
+def get_medicine_by_name(db, name: str):
+    """Look up a medicine by brand or generic name (case-insensitive partial match)."""
+    name = name.strip().lower()
+    return db.query(Medicine).filter(
+        (Medicine.generic_name.ilike(f"%{name}%")) |
+        (Medicine.brand_name.ilike(f"%{name}%"))
+    ).first()
