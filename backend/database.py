@@ -19,6 +19,16 @@ class Medicine(Base):
     warnings = Column(Text)
     do_not_use = Column(Text)
 
+
+class Interaction(Base):
+    __tablename__ = "interactions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    drug_a = Column(String, index=True)
+    drug_b = Column(String, index=True)
+    severity = Column(String)      # "mild", "moderate", "severe"
+    description = Column(Text)
+
 def init_db():
     Base.metadata.create_all(bind=engine)
 
@@ -30,3 +40,16 @@ def get_medicine_by_name(db, name: str):
         (Medicine.generic_name.ilike(f"%{name}%")) |
         (Medicine.brand_name.ilike(f"%{name}%"))
     ).first()
+
+
+def check_interaction(db, drug_a: str, drug_b: str):
+    """Check for a known interaction between two drugs, in either order."""
+    a = drug_a.strip().lower()
+    b = drug_b.strip().lower()
+
+    result = db.query(Interaction).filter(
+        ((Interaction.drug_a == a) & (Interaction.drug_b == b)) |
+        ((Interaction.drug_a == b) & (Interaction.drug_b == a))
+    ).first()
+
+    return result
