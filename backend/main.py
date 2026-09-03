@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from chat_service import ask_about_medicine
 from interaction_service import check_drug_interaction
+from symptom_service import suggest_for_symptom
 
 app = FastAPI(title="PharmAgent AI Medicine Assistant")
 
@@ -21,6 +22,13 @@ class ChatRequest(BaseModel):
 class InteractionRequest(BaseModel):
     drug_a: str
     drug_b: str
+
+class SymptomRequest(BaseModel):
+    symptom: str
+
+@app.post("/symptoms")
+def symptoms(request: SymptomRequest):
+    return suggest_for_symptom(request.symptom)
 
 @app.post("/interactions")
 def interactions(request: InteractionRequest):
