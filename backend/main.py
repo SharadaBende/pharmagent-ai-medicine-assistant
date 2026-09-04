@@ -1,3 +1,7 @@
+from fastapi import UploadFile, File
+from ocr_service import process_prescription_image
+import shutil
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -41,3 +45,16 @@ def health_check():
 @app.post("/chat")
 def chat(request: ChatRequest):
     return ask_about_medicine(request.question, request.medicine_name)
+
+@app.post("/ocr")
+async def ocr_prescription(file: UploadFile = File(...)):
+    temp_path = f"temp_{file.filename}"
+    with open(temp_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    try:
+        result = process_prescription_image(temp_path)
+    finally:
+        os.remove(temp_path)  # clean up temp file regardless of success/failure
+
+    return result
