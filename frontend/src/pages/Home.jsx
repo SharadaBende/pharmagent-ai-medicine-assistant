@@ -30,9 +30,7 @@ function Home() {
         ))}
       </div>
 
-      <p className="text-xs text-gray-500 mt-8">
-        PharmAgent provides general information only and is not a substitute for professional medical advice.
-      </p>
+      
     </div>
   )
 }

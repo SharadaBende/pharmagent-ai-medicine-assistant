@@ -77,9 +77,7 @@ function Interactions() {
         </div>
       )}
 
-      <p className="text-xs text-gray-500 mt-6">
-        This tool provides general information only and is not a substitute for professional medical advice.
-      </p>
+      
     </div>
   )
 }

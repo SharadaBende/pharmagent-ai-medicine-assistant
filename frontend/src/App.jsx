@@ -22,15 +22,18 @@ function App() {
   return (
     <BrowserRouter>
       <Navbar />
-      <div className="max-w-2xl mx-auto p-6">
+      <div className="max-w-2xl mx-auto p-6 min-h-[80vh]">
         <Routes>
-  <Route path="/" element={<Home />} />
-  <Route path="/chat" element={<Chat />} />
-  <Route path="/interactions" element={<Interactions />} />
-  <Route path="/symptoms" element={<Symptoms />} />
-  <Route path="/ocr" element={<Ocr />} />
-</Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/interactions" element={<Interactions />} />
+          <Route path="/symptoms" element={<Symptoms />} />
+          <Route path="/ocr" element={<Ocr />} />
+        </Routes>
       </div>
+      <footer className="text-center text-xs text-gray-500 py-6 border-t">
+        PharmAgent provides general information only and is not a substitute for professional medical advice.
+      </footer>
     </BrowserRouter>
   )
 }
