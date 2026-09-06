@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine, Column, Integer, String, Text
 from sqlalchemy.orm import declarative_base, sessionmaker
+import requests
 
 DATABASE_URL = "sqlite:///./pharmagent.db"
 
@@ -34,12 +35,57 @@ def init_db():
 
 
 def get_medicine_by_name(db, name: str):
-    """Look up a medicine by brand or generic name (case-insensitive partial match)."""
-    name = name.strip().lower()
-    return db.query(Medicine).filter(
-        (Medicine.generic_name.ilike(f"%{name}%")) |
-        (Medicine.brand_name.ilike(f"%{name}%"))
+    """Look up a medicine locally first; if not found, try fetching it live from OpenFDA."""
+    name_clean = name.strip().lower()
+    result = db.query(Medicine).filter(
+        (Medicine.generic_name.ilike(f"%{name_clean}%")) |
+        (Medicine.brand_name.ilike(f"%{name_clean}%"))
     ).first()
+
+    if result:
+        return result
+
+    return fetch_and_cache_medicine(db, name_clean)
+
+def fetch_and_cache_medicine(db, name: str):
+    """If a medicine isn't in the local DB, try fetching it live from OpenFDA and cache it."""
+    name_clean = name.strip().lower()
+
+    response = requests.get(
+        "https://api.fda.gov/drug/label.json",
+        params={"search": f'openfda.generic_name.exact:"{name_clean.upper()}"', "limit": 1}
+    )
+
+    if response.status_code != 200:
+        return None
+
+    results = response.json().get("results", [])
+    if not results:
+        return None
+
+    result = results[0]
+    openfda = result.get("openfda", {})
+
+    def extract_field(field):
+        value = result.get(field)
+        if isinstance(value, list):
+            return " ".join(value)
+        return value or ""
+
+    medicine = Medicine(
+        brand_name=", ".join(openfda.get("brand_name", [])),
+        generic_name=", ".join(openfda.get("generic_name", [name_clean])),
+        purpose=extract_field("purpose"),
+        indications=extract_field("indications_and_usage"),
+        dosage=extract_field("dosage_and_administration"),
+        warnings=extract_field("warnings"),
+        do_not_use=extract_field("do_not_use"),
+    )
+
+    db.add(medicine)
+    db.commit()
+    db.refresh(medicine)
+    return medicine
 
 
 def check_interaction(db, drug_a: str, drug_b: str):
