@@ -1,3 +1,5 @@
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from database import SessionLocal, Interaction, init_db
 
 # Well-documented interactions among our 10 seeded medicines.

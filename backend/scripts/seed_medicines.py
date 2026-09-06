@@ -1,4 +1,6 @@
 import requests
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from database import SessionLocal, Medicine, init_db
 
 # A starter list of common OTC/generic medicine names to pull from OpenFDA
