@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import axios from 'axios'
+import { useAuth } from '../context/AuthContext'
 
 function Chat() {
   const [medicineName, setMedicineName] = useState('')
@@ -7,6 +8,7 @@ function Chat() {
   const [answer, setAnswer] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const { token } = useAuth()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -15,10 +17,16 @@ function Chat() {
     setAnswer('')
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/chat', {
-        medicine_name: medicineName,
-        question: question,
-      })
+      const response = await axios.post(
+  'http://127.0.0.1:8000/chat',
+  {
+    medicine_name: medicineName,
+    question: question,
+  },
+  {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  }
+)
       setAnswer(response.data.answer)
     } catch (err) {
       setError('Something went wrong. Please try again.')
