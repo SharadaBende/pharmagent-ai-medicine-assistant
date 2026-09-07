@@ -8,6 +8,10 @@ from pydantic import BaseModel
 from chat_service import ask_about_medicine
 from interaction_service import check_drug_interaction
 from symptom_service import suggest_for_symptom
+from database import User
+from auth_service import hash_password, verify_password, create_access_token
+from database import SessionLocal
+
 
 app = FastAPI(title="PharmAgent AI Medicine Assistant")
 
@@ -29,6 +33,15 @@ class InteractionRequest(BaseModel):
 
 class SymptomRequest(BaseModel):
     symptom: str
+
+
+class SignupRequest(BaseModel):
+    email: str
+    password: str
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
 
 @app.post("/symptoms")
 def symptoms(request: SymptomRequest):
@@ -58,3 +71,37 @@ async def ocr_prescription(file: UploadFile = File(...)):
         os.remove(temp_path)  # clean up temp file regardless of success/failure
 
     return result
+
+
+from database import SessionLocal
+
+@app.post("/signup")
+def signup(request: SignupRequest):
+    db = SessionLocal()
+    existing = db.query(User).filter(User.email == request.email).first()
+    if existing:
+        db.close()
+        return {"error": "An account with this email already exists."}
+
+    new_user = User(
+        email=request.email,
+        hashed_password=hash_password(request.password)
+    )
+    db.add(new_user)
+    db.commit()
+    db.close()
+
+    token = create_access_token({"sub": request.email})
+    return {"access_token": token, "token_type": "bearer"}
+
+@app.post("/login")
+def login(request: LoginRequest):
+    db = SessionLocal()
+    user = db.query(User).filter(User.email == request.email).first()
+    db.close()
+
+    if not user or not verify_password(request.password, user.hashed_password):
+        return {"error": "Invalid email or password."}
+
+    token = create_access_token({"sub": request.email})
+    return {"access_token": token, "token_type": "bearer"}

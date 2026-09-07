@@ -21,6 +21,14 @@ class Medicine(Base):
     do_not_use = Column(Text)
 
 
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True)
+    hashed_password = Column(String)
+
+
 class Interaction(Base):
     __tablename__ = "interactions"
 
