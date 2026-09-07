@@ -1,6 +1,21 @@
 from sqlalchemy import create_engine, Column, Integer, String, Text
 from sqlalchemy.orm import declarative_base, sessionmaker
 import requests
+from datetime import datetime
+
+
+
+
+# Common regional/brand name synonyms mapped to their OpenFDA-recognized generic name
+DRUG_SYNONYMS = {
+    "paracetamol": "acetaminophen",
+    "crocin": "acetaminophen",
+    "brufen": "ibuprofen",
+    "combiflam": "ibuprofen",
+}
+
+def resolve_synonym(name: str) -> str:
+    return DRUG_SYNONYMS.get(name.strip().lower(), name.strip().lower())
 
 DATABASE_URL = "sqlite:///./pharmagent.db"
 
@@ -38,6 +53,18 @@ class Interaction(Base):
     severity = Column(String)      # "mild", "moderate", "severe"
     description = Column(Text)
 
+
+class MedicineHistory(Base):
+    __tablename__ = "medicine_history"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, index=True)
+    medicine_name = Column(String)
+    question = Column(Text)
+    answer = Column(Text)
+    timestamp = Column(String)
+
+
 def init_db():
     Base.metadata.create_all(bind=engine)
 
@@ -57,7 +84,7 @@ def get_medicine_by_name(db, name: str):
 
 def fetch_and_cache_medicine(db, name: str):
     """If a medicine isn't in the local DB, try fetching it live from OpenFDA and cache it."""
-    name_clean = name.strip().lower()
+    name_clean = resolve_synonym(name)
 
     response = requests.get(
         "https://api.fda.gov/drug/label.json",

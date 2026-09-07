@@ -13,6 +13,24 @@ from auth_service import hash_password, verify_password, create_access_token
 from database import SessionLocal
 from auth_service import get_current_user
 from database import User
+from fastapi import Header
+from typing import Optional
+from auth_service import decode_access_token
+from database import User, MedicineHistory
+from datetime import datetime
+
+
+def get_optional_user(authorization: Optional[str] = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        return None
+    token = authorization.replace("Bearer ", "")
+    payload = decode_access_token(token)
+    if not payload:
+        return None
+    db = SessionLocal()
+    user = db.query(User).filter(User.email == payload.get("sub")).first()
+    db.close()
+    return user
 
 
 app = FastAPI(title="PharmAgent AI Medicine Assistant")
@@ -58,8 +76,23 @@ def health_check():
     return {"status": "ok"}
 
 @app.post("/chat")
-def chat(request: ChatRequest):
-    return ask_about_medicine(request.question, request.medicine_name)
+def chat(request: ChatRequest, current_user: Optional[User] = Depends(get_optional_user)):
+    result = ask_about_medicine(request.question, request.medicine_name)
+
+    if current_user:
+        db = SessionLocal()
+        history_entry = MedicineHistory(
+            user_id=current_user.id,
+            medicine_name=request.medicine_name,
+            question=request.question,
+            answer=result.get("answer", ""),
+            timestamp=datetime.utcnow().isoformat()
+        )
+        db.add(history_entry)
+        db.commit()
+        db.close()
+
+    return result
 
 @app.post("/ocr")
 async def ocr_prescription(file: UploadFile = File(...)):
@@ -112,3 +145,23 @@ def login(request: LoginRequest):
 @app.get("/me")
 def read_current_user(current_user: User = Depends(get_current_user)):
     return {"email": current_user.email, "id": current_user.id}
+
+
+
+@app.get("/history")
+def get_history(current_user: User = Depends(get_current_user)):
+    db = SessionLocal()
+    entries = db.query(MedicineHistory).filter(
+        MedicineHistory.user_id == current_user.id
+    ).order_by(MedicineHistory.id.desc()).all()
+    db.close()
+
+    return [
+        {
+            "medicine_name": e.medicine_name,
+            "question": e.question,
+            "answer": e.answer,
+            "timestamp": e.timestamp
+        }
+        for e in entries
+    ]
