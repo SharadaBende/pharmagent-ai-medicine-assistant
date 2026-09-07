@@ -2,7 +2,7 @@ from fastapi import UploadFile, File
 from ocr_service import process_prescription_image
 import shutil
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from chat_service import ask_about_medicine
@@ -11,6 +11,8 @@ from symptom_service import suggest_for_symptom
 from database import User
 from auth_service import hash_password, verify_password, create_access_token
 from database import SessionLocal
+from auth_service import get_current_user
+from database import User
 
 
 app = FastAPI(title="PharmAgent AI Medicine Assistant")
@@ -105,3 +107,8 @@ def login(request: LoginRequest):
 
     token = create_access_token({"sub": request.email})
     return {"access_token": token, "token_type": "bearer"}
+
+
+@app.get("/me")
+def read_current_user(current_user: User = Depends(get_current_user)):
+    return {"email": current_user.email, "id": current_user.id}
