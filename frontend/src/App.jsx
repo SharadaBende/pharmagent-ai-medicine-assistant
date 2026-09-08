@@ -8,6 +8,7 @@ import { AuthProvider } from './context/AuthContext'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import { useAuth } from './context/AuthContext'
+import History from './pages/History'
 
 function Navbar() {
   const { isLoggedIn, email, logout } = useAuth()
@@ -20,6 +21,7 @@ function Navbar() {
       <Link to="/interactions" className="hover:underline">Interactions</Link>
       <Link to="/symptoms" className="hover:underline">Symptoms</Link>
       <Link to="/ocr" className="hover:underline">Prescription OCR</Link>
+      <Link to="/history" className="hover:underline">History</Link>
       <span className="ml-auto flex gap-4 items-center">
         {isLoggedIn ? (
           <>
@@ -51,6 +53,7 @@ function App() {
           <Route path="/ocr" element={<Ocr />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/history" element={<History />} />
         </Routes>
       </div>
       <footer className="text-center text-xs text-gray-500 py-6 border-t">
