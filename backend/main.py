@@ -18,6 +18,7 @@ from typing import Optional
 from auth_service import decode_access_token
 from database import User, MedicineHistory
 from datetime import datetime
+from interaction_service import check_multiple_interactions
 
 
 def get_optional_user(authorization: Optional[str] = Header(None)):
@@ -63,6 +64,9 @@ class LoginRequest(BaseModel):
     email: str
     password: str
 
+class MultiInteractionRequest(BaseModel):
+    drug_names: list[str]
+
 @app.post("/symptoms")
 def symptoms(request: SymptomRequest):
     return suggest_for_symptom(request.symptom)
@@ -70,6 +74,12 @@ def symptoms(request: SymptomRequest):
 @app.post("/interactions")
 def interactions(request: InteractionRequest):
     return check_drug_interaction(request.drug_a, request.drug_b)
+
+@app.post("/interactions/multi")
+def multi_interactions(request: MultiInteractionRequest):
+    if len(request.drug_names) < 2:
+        return {"error": "Please provide at least 2 medicines to check."}
+    return {"results": check_multiple_interactions(request.drug_names)}
 
 @app.get("/health")
 def health_check():
