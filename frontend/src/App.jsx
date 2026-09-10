@@ -11,10 +11,12 @@ import { useAuth } from './context/AuthContext'
 import History from './pages/History'
 import Reminders from './pages/Reminders'
 import { LanguageProvider, useLanguage } from './context/LanguageContext'
+import { ThemeProvider, useTheme } from './context/ThemeContext'
 
 function Navbar() {
   const { isLoggedIn, email, logout } = useAuth()
   const { language, changeLanguage, t } = useLanguage()
+  const { isDark, toggleTheme } = useTheme()
 
   return (
     <nav className="bg-blue-600 text-white p-4 flex gap-6 items-center flex-wrap">
@@ -27,15 +29,21 @@ function Navbar() {
       <Link to="/history" className="hover:underline">{t('navHistory')}</Link>
       <Link to="/reminders" className="hover:underline">{t('navReminders')}</Link>
 
+      
+
       <select
-        value={language}
-        onChange={(e) => changeLanguage(e.target.value)}
-        className="text-black rounded px-2 py-1 text-sm"
-      >
-        <option value="en">English</option>
-        <option value="hi">हिन्दी</option>
-        <option value="mr">मराठी</option>
-      </select>
+  value={language}
+  onChange={(e) => changeLanguage(e.target.value)}
+  className="text-black rounded px-2 py-1 text-sm"
+>
+  <option value="en">English</option>
+  <option value="hi">हिन्दी</option>
+  <option value="mr">मराठी</option>
+</select>
+
+<button onClick={toggleTheme} className="text-xl" title="Toggle dark mode">
+  {isDark ? '☀️' : '🌙'}
+</button>
 
       <span className="ml-auto flex gap-4 items-center">
         {isLoggedIn ? (
@@ -66,11 +74,12 @@ function Footer() {
 
 function App() {
   return (
+    <ThemeProvider>
     <LanguageProvider>
     <AuthProvider>
     <BrowserRouter>
       <Navbar />
-      <div className="max-w-2xl mx-auto p-6 min-h-[80vh]">
+      <div className="max-w-2xl mx-auto p-6 min-h-[80vh] bg-white dark:bg-gray-900 text-black dark:text-white transition-colors">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/chat" element={<Chat />} />
@@ -87,6 +96,7 @@ function App() {
     </BrowserRouter>
     </AuthProvider>
     </LanguageProvider>
+    </ThemeProvider>
 
   )
 }
