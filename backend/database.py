@@ -65,6 +65,17 @@ class MedicineHistory(Base):
     timestamp = Column(String)
 
 
+class Reminder(Base):
+    __tablename__ = "reminders"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, index=True)
+    medicine_name = Column(String)
+    dosage_note = Column(String)
+    time_of_day = Column(String)  # e.g. "08:00"
+    frequency = Column(String)    # e.g. "daily"
+
+
 def init_db():
     Base.metadata.create_all(bind=engine)
 

@@ -19,6 +19,7 @@ from auth_service import decode_access_token
 from database import User, MedicineHistory
 from datetime import datetime
 from interaction_service import check_multiple_interactions
+from database import Reminder
 
 
 def get_optional_user(authorization: Optional[str] = Header(None)):
@@ -66,6 +67,13 @@ class LoginRequest(BaseModel):
 
 class MultiInteractionRequest(BaseModel):
     drug_names: list[str]
+
+
+class ReminderRequest(BaseModel):
+    medicine_name: str
+    dosage_note: str
+    time_of_day: str
+    frequency: str
 
 @app.post("/symptoms")
 def symptoms(request: SymptomRequest):
@@ -175,3 +183,59 @@ def get_history(current_user: User = Depends(get_current_user)):
         }
         for e in entries
     ]
+
+
+
+@app.post("/reminders")
+def create_reminder(request: ReminderRequest, current_user: User = Depends(get_current_user)):
+    db = SessionLocal()
+    reminder = Reminder(
+        user_id=current_user.id,
+        medicine_name=request.medicine_name,
+        dosage_note=request.dosage_note,
+        time_of_day=request.time_of_day,
+        frequency=request.frequency,
+    )
+    db.add(reminder)
+    db.commit()
+    db.refresh(reminder)
+    db.close()
+    return {
+        "id": reminder.id,
+        "medicine_name": reminder.medicine_name,
+        "dosage_note": reminder.dosage_note,
+        "time_of_day": reminder.time_of_day,
+        "frequency": reminder.frequency,
+    }
+
+@app.get("/reminders")
+def list_reminders(current_user: User = Depends(get_current_user)):
+    db = SessionLocal()
+    reminders = db.query(Reminder).filter(Reminder.user_id == current_user.id).all()
+    db.close()
+    return [
+        {
+            "id": r.id,
+            "medicine_name": r.medicine_name,
+            "dosage_note": r.dosage_note,
+            "time_of_day": r.time_of_day,
+            "frequency": r.frequency,
+        }
+        for r in reminders
+    ]
+
+@app.delete("/reminders/{reminder_id}")
+def delete_reminder(reminder_id: int, current_user: User = Depends(get_current_user)):
+    db = SessionLocal()
+    reminder = db.query(Reminder).filter(
+        Reminder.id == reminder_id, Reminder.user_id == current_user.id
+    ).first()
+
+    if not reminder:
+        db.close()
+        return {"error": "Reminder not found."}
+
+    db.delete(reminder)
+    db.commit()
+    db.close()
+    return {"deleted": True}
