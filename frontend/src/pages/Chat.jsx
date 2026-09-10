@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
+import { useLanguage } from '../context/LanguageContext'
 
 function Chat() {
   const [medicineName, setMedicineName] = useState('')
@@ -10,7 +11,8 @@ function Chat() {
   const [error, setError] = useState('')
   const { token } = useAuth()
   const [isListening, setIsListening] = useState(false)
-const recognitionRef = useRef(null)
+  const recognitionRef = useRef(null)
+  const { language, t } = useLanguage()
 
 const startListening = () => {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
@@ -50,6 +52,7 @@ const startListening = () => {
   {
     medicine_name: medicineName,
     question: question,
+    language: language,
   },
   {
     headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -65,12 +68,12 @@ const startListening = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Ask About a Medicine</h1>
+      <h1 className="text-2xl font-bold mb-4">{t('chatTitle')}</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <input
           type="text"
-          placeholder="Medicine name (e.g. ibuprofen)"
+          placeholder={t('chatMedicinePlaceholder')}
           value={medicineName}
           onChange={(e) => setMedicineName(e.target.value)}
           className="border rounded p-2"
@@ -78,7 +81,7 @@ const startListening = () => {
         />
         <div className="relative">
   <textarea
-    placeholder="Your question (e.g. What is this used for?)"
+    placeholder={t('chatQuestionPlaceholder')}
     value={question}
     onChange={(e) => setQuestion(e.target.value)}
     className="border rounded p-2 w-full pr-12"
@@ -99,7 +102,7 @@ const startListening = () => {
           disabled={loading}
           className="bg-blue-600 text-white rounded p-2 font-semibold disabled:opacity-50"
         >
-          {loading ? 'Asking...' : 'Ask'}
+          {loading ? t('chatAsking') : t('chatAskButton')}
         </button>
       </form>
 
