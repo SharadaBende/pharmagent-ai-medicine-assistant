@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 
@@ -9,6 +9,34 @@ function Chat() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const { token } = useAuth()
+  const [isListening, setIsListening] = useState(false)
+const recognitionRef = useRef(null)
+
+const startListening = () => {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+
+  if (!SpeechRecognition) {
+    alert('Voice input is not supported in this browser. Try Chrome.')
+    return
+  }
+
+  const recognition = new SpeechRecognition()
+  recognition.lang = 'en-US'
+  recognition.interimResults = false
+  recognition.maxAlternatives = 1
+
+  recognition.onstart = () => setIsListening(true)
+  recognition.onend = () => setIsListening(false)
+  recognition.onerror = () => setIsListening(false)
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript
+    setQuestion((prev) => (prev ? prev + ' ' + transcript : transcript))
+  }
+
+  recognitionRef.current = recognition
+  recognition.start()
+}
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -48,14 +76,24 @@ function Chat() {
           className="border rounded p-2"
           required
         />
-        <textarea
-          placeholder="Your question (e.g. What is this used for?)"
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          className="border rounded p-2"
-          rows={3}
-          required
-        />
+        <div className="relative">
+  <textarea
+    placeholder="Your question (e.g. What is this used for?)"
+    value={question}
+    onChange={(e) => setQuestion(e.target.value)}
+    className="border rounded p-2 w-full pr-12"
+    rows={3}
+    required
+  />
+  <button
+    type="button"
+    onClick={startListening}
+    className={`absolute right-2 top-2 text-xl ${isListening ? 'text-red-600 animate-pulse' : 'text-gray-500'}`}
+    title="Speak your question"
+  >
+    🎤
+  </button>
+</div>
         <button
           type="submit"
           disabled={loading}
