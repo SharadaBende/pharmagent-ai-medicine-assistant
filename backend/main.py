@@ -48,6 +48,7 @@ app.add_middleware(
 class ChatRequest(BaseModel):
     medicine_name: str
     question: str
+    language: str = "en"
 
 class InteractionRequest(BaseModel):
     drug_a: str
@@ -95,7 +96,7 @@ def health_check():
 
 @app.post("/chat")
 def chat(request: ChatRequest, current_user: Optional[User] = Depends(get_optional_user)):
-    result = ask_about_medicine(request.question, request.medicine_name)
+    result = ask_about_medicine(request.question, request.medicine_name, request.language)
 
     if current_user:
         db = SessionLocal()

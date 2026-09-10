@@ -16,7 +16,7 @@ Rules you must always follow:
 - Keep answers concise and easy to understand for a general audience.
 """
 
-def ask_about_medicine(user_question: str, medicine_name: str):
+def ask_about_medicine(user_question: str, medicine_name: str, language: str = "en"):
     db = SessionLocal()
     medicine = get_medicine_by_name(db, medicine_name)
     db.close()
@@ -36,10 +36,13 @@ Warnings: {medicine.warnings}
 Do not use if: {medicine.do_not_use}
 """
 
+    language_names = {"en": "English", "hi": "Hindi", "mr": "Marathi"}
+    language_instruction = f"IMPORTANT: Respond entirely in {language_names.get(language, 'English')}, regardless of what language the context above is written in."
+
     response = client.chat.completions.create(
         model="openai/gpt-oss-120b",
         messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": SYSTEM_PROMPT + "\n\n" + language_instruction},
             {"role": "user", "content": f"Context:\n{context}\n\nQuestion: {user_question}"}
         ]
     )
