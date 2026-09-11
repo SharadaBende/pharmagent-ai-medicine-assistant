@@ -78,22 +78,24 @@ function App() {
     <LanguageProvider>
     <AuthProvider>
     <BrowserRouter>
-      <Navbar />
-      <div className="max-w-2xl mx-auto p-6 min-h-[80vh] bg-white dark:bg-gray-900 text-black dark:text-white transition-colors">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/interactions" element={<Interactions />} />
-          <Route path="/symptoms" element={<Symptoms />} />
-          <Route path="/ocr" element={<Ocr />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/reminders" element={<Reminders />} />
-        </Routes>
-      </div>
-      <Footer />
-    </BrowserRouter>
+  <div className="min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white transition-colors">
+    <Navbar />
+    <div className="max-w-2xl mx-auto p-6 min-h-[70vh]">
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/chat" element={<Chat />} />
+        <Route path="/interactions" element={<Interactions />} />
+        <Route path="/symptoms" element={<Symptoms />} />
+        <Route path="/ocr" element={<Ocr />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/history" element={<History />} />
+        <Route path="/reminders" element={<Reminders />} />
+      </Routes>
+    </div>
+    <Footer />
+  </div>
+</BrowserRouter>
     </AuthProvider>
     </LanguageProvider>
     </ThemeProvider>
