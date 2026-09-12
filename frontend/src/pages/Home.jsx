@@ -10,8 +10,10 @@ const features = [
 function Home() {
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-2">PharmAgent</h1>
-      <p className="text-gray-600 mb-8">
+      <h1 className="text-3xl font-bold mb-2 text-slate-900 dark:text-slate-100">
+        PharmAgent
+      </h1>
+      <p className="text-slate-600 dark:text-slate-400 mb-8 max-w-2xl">
         An AI-powered medicine assistant that answers medicine questions, checks drug interactions,
         offers general symptom guidance, and reads prescriptions — all grounded in verified drug data,
         never guessed.
@@ -22,15 +24,22 @@ function Home() {
           <Link
             key={f.to}
             to={f.to}
-            className="border rounded-lg p-4 hover:shadow-md hover:border-blue-400 transition"
+            className="group border border-slate-200 dark:border-slate-700
+                       bg-white dark:bg-slate-800
+                       rounded-lg p-4
+                       hover:shadow-md hover:border-teal-400 dark:hover:border-teal-500
+                       transition"
           >
-            <div className="font-semibold text-lg">{f.title}</div>
-            <div className="text-sm text-gray-600 mt-1">{f.desc}</div>
+            <div className="font-semibold text-lg text-slate-900 dark:text-slate-100
+                             group-hover:text-teal-700 dark:group-hover:text-teal-400 transition">
+              {f.title}
+            </div>
+            <div className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+              {f.desc}
+            </div>
           </Link>
         ))}
       </div>
-
-      
     </div>
   )
 }
