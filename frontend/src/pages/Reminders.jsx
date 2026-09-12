@@ -88,9 +88,15 @@ function Reminders() {
   if (!isLoggedIn) {
     return (
       <div>
-        <h1 className="text-2xl font-bold mb-4">Reminders</h1>
-        <p>
-          Please <Link to="/login" className="text-blue-600 hover:underline">log in</Link> to set medicine reminders.
+        <h1 className="text-2xl font-bold mb-4 text-slate-900 dark:text-slate-100">
+          Reminders
+        </h1>
+        <p className="text-slate-700 dark:text-slate-300">
+          Please{' '}
+          <Link to="/login" className="text-teal-600 dark:text-teal-400 hover:underline">
+            log in
+          </Link>{' '}
+          to set medicine reminders.
         </p>
       </div>
     )
@@ -98,17 +104,25 @@ function Reminders() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Medicine Reminders</h1>
+      <h1 className="text-2xl font-bold mb-4 text-slate-900 dark:text-slate-100">
+        Medicine Reminders
+      </h1>
 
       {notifPermission !== 'granted' && notifPermission !== 'unsupported' && (
-        <div className="bg-yellow-50 border border-yellow-300 rounded p-3 mb-4 text-sm">
+        <div className="bg-amber-50 dark:bg-amber-950/40
+                         border border-amber-300 dark:border-amber-700
+                         text-amber-900 dark:text-amber-200
+                         rounded p-3 mb-4 text-sm">
           Enable browser notifications to get reminded when it's time to take your medicine.
-          <button onClick={requestPermission} className="ml-2 text-blue-600 hover:underline font-semibold">
+          <button
+            onClick={requestPermission}
+            className="ml-2 text-amber-700 dark:text-amber-300 hover:underline font-semibold"
+          >
             Enable Notifications
           </button>
         </div>
       )}
-      <p className="text-xs text-gray-500 mb-4">
+      <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
         Note: notifications only work while this tab is open in your browser.
       </p>
 
@@ -118,7 +132,12 @@ function Reminders() {
           placeholder="Medicine name"
           value={medicineName}
           onChange={(e) => setMedicineName(e.target.value)}
-          className="border rounded p-2"
+          className="border border-slate-300 dark:border-slate-600
+                     bg-white dark:bg-slate-800
+                     text-slate-900 dark:text-slate-100
+                     placeholder:text-slate-400 dark:placeholder:text-slate-500
+                     rounded p-2
+                     focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
           required
         />
         <input
@@ -126,42 +145,70 @@ function Reminders() {
           placeholder="Dosage note (e.g. 1 tablet after food)"
           value={dosageNote}
           onChange={(e) => setDosageNote(e.target.value)}
-          className="border rounded p-2"
+          className="border border-slate-300 dark:border-slate-600
+                     bg-white dark:bg-slate-800
+                     text-slate-900 dark:text-slate-100
+                     placeholder:text-slate-400 dark:placeholder:text-slate-500
+                     rounded p-2
+                     focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
         />
         <input
           type="time"
           value={timeOfDay}
           onChange={(e) => setTimeOfDay(e.target.value)}
-          className="border rounded p-2"
+          className="border border-slate-300 dark:border-slate-600
+                     bg-white dark:bg-slate-800
+                     text-slate-900 dark:text-slate-100
+                     rounded p-2
+                     focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
           required
         />
         <select
           value={frequency}
           onChange={(e) => setFrequency(e.target.value)}
-          className="border rounded p-2"
+          className="border border-slate-300 dark:border-slate-600
+                     bg-white dark:bg-slate-800
+                     text-slate-900 dark:text-slate-100
+                     rounded p-2
+                     focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
         >
           <option value="daily">Daily</option>
           <option value="twice_daily">Twice Daily</option>
           <option value="weekly">Weekly</option>
         </select>
-        <button type="submit" className="bg-blue-600 text-white rounded p-2 font-semibold">
+        <button
+          type="submit"
+          className="bg-amber-500 hover:bg-amber-600 text-white rounded p-2 font-semibold transition"
+        >
           Add Reminder
         </button>
       </form>
 
-      {error && <p className="text-red-600 mb-4">{error}</p>}
+      {error && <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>}
 
       <div className="flex flex-col gap-3">
-        {reminders.length === 0 && <p className="text-gray-600">No reminders set yet.</p>}
+        {reminders.length === 0 && (
+          <p className="text-slate-600 dark:text-slate-400">No reminders set yet.</p>
+        )}
         {reminders.map((r) => (
-          <div key={r.id} className="border rounded-lg p-4 flex justify-between items-center">
+          <div
+            key={r.id}
+            className="border border-slate-200 dark:border-slate-700
+                       bg-white dark:bg-slate-800
+                       rounded-lg p-4 flex justify-between items-center"
+          >
             <div>
-              <div className="font-semibold">{r.medicine_name}</div>
-              <div className="text-sm text-gray-600">
+              <div className="font-semibold text-slate-900 dark:text-slate-100">
+                {r.medicine_name}
+              </div>
+              <div className="text-sm text-slate-600 dark:text-slate-400">
                 {r.dosage_note} — {r.time_of_day} ({r.frequency.replace('_', ' ')})
               </div>
             </div>
-            <button onClick={() => handleDelete(r.id)} className="text-red-600 text-sm hover:underline">
+            <button
+              onClick={() => handleDelete(r.id)}
+              className="text-red-600 dark:text-red-400 text-sm hover:underline"
+            >
               Delete
             </button>
           </div>
