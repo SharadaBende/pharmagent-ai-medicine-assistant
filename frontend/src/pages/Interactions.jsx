@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import axios from 'axios'
+import { useLanguage } from '../context/LanguageContext'
 
 function Interactions() {
   const [drugs, setDrugs] = useState(['', ''])
   const [results, setResults] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const { language, t } = useLanguage()
 
   const updateDrug = (index, value) => {
     const updated = [...drugs]
@@ -27,7 +29,7 @@ function Interactions() {
     const filledDrugs = drugs.map((d) => d.trim()).filter(Boolean)
 
     if (filledDrugs.length < 2) {
-      setError('Please enter at least 2 medicines.')
+      setError(t('interactionsMinError'))
       return
     }
 
@@ -45,7 +47,7 @@ function Interactions() {
         setResults(response.data.results)
       }
     } catch (err) {
-      setError('Something went wrong. Please try again.')
+      setError(t('errorGeneric'))
     } finally {
       setLoading(false)
     }
@@ -61,10 +63,10 @@ function Interactions() {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4 text-slate-900 dark:text-slate-100">
-        Drug Interaction Checker
+        {t('interactionsTitle')}
       </h1>
       <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
-        Check interactions between 2 or more medicines.
+        {t('interactionsSubtitle')}
       </p>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
@@ -72,7 +74,7 @@ function Interactions() {
           <div key={i} className="flex gap-2">
             <input
               type="text"
-              placeholder={`Medicine ${i + 1}`}
+              placeholder={`${t('interactionsMedicineLabel')} ${i + 1}`}
               value={drug}
               onChange={(e) => updateDrug(i, e.target.value)}
               className="border border-slate-300 dark:border-slate-600
@@ -99,7 +101,7 @@ function Interactions() {
           onClick={addDrugField}
           className="text-teal-600 dark:text-teal-400 text-sm text-left hover:underline"
         >
-          + Add another medicine
+          {t('interactionsAddAnother')}
         </button>
 
         <button
@@ -108,7 +110,7 @@ function Interactions() {
           className="bg-teal-600 hover:bg-teal-700 text-white rounded p-2 font-semibold
                      disabled:opacity-50 transition"
         >
-          {loading ? 'Checking...' : 'Check Interactions'}
+          {loading ? t('interactionsChecking') : t('interactionsCheckButton')}
         </button>
       </form>
 
@@ -117,7 +119,7 @@ function Interactions() {
       {results && (
         <div className="mt-6 flex flex-col gap-3">
           <h2 className="font-semibold text-slate-900 dark:text-slate-100">
-            Results ({results.length} pair{results.length !== 1 ? 's' : ''} checked)
+            {t('interactionsResultsHeading')} ({results.length} {t('interactionsPairsChecked')})
           </h2>
           {results.map((r, i) => (
             <div
@@ -130,7 +132,7 @@ function Interactions() {
                 {r.drug_a} + {r.drug_b}
               </div>
               <div className={`inline-block px-3 py-1 rounded text-sm font-semibold mb-2 ${severityColor[r.severity] || severityColor.unknown}`}>
-                {r.verified ? `Severity: ${r.severity}` : 'Not verified'}
+                {r.verified ? `${t('interactionsSeverityLabel')}: ${r.severity}` : t('interactionsNotVerified')}
               </div>
               <div className="text-sm whitespace-pre-wrap text-slate-700 dark:text-slate-300">
                 {r.description}
