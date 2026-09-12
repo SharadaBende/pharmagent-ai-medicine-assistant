@@ -68,7 +68,9 @@ const startListening = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">{t('chatTitle')}</h1>
+      <h1 className="text-2xl font-bold mb-4 text-slate-900 dark:text-slate-100">
+        {t('chatTitle')}
+      </h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <input
@@ -76,45 +78,59 @@ const startListening = () => {
           placeholder={t('chatMedicinePlaceholder')}
           value={medicineName}
           onChange={(e) => setMedicineName(e.target.value)}
-          className="border rounded p-2"
+          className="border border-slate-300 dark:border-slate-600
+                     bg-white dark:bg-slate-800
+                     text-slate-900 dark:text-slate-100
+                     placeholder:text-slate-400 dark:placeholder:text-slate-500
+                     rounded p-2
+                     focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
           required
         />
         <div className="relative">
-  <textarea
-    placeholder={t('chatQuestionPlaceholder')}
-    value={question}
-    onChange={(e) => setQuestion(e.target.value)}
-    className="border rounded p-2 w-full pr-12"
-    rows={3}
-    required
-  />
-  <button
-    type="button"
-    onClick={startListening}
-    className={`absolute right-2 top-2 text-xl ${isListening ? 'text-red-600 animate-pulse' : 'text-gray-500'}`}
-    title="Speak your question"
-  >
-    🎤
-  </button>
-</div>
+          <textarea
+            placeholder={t('chatQuestionPlaceholder')}
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            className="border border-slate-300 dark:border-slate-600
+                       bg-white dark:bg-slate-800
+                       text-slate-900 dark:text-slate-100
+                       placeholder:text-slate-400 dark:placeholder:text-slate-500
+                       rounded p-2 w-full pr-12
+                       focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+            rows={3}
+            required
+          />
+          <button
+            type="button"
+            onClick={startListening}
+            className={`absolute right-2 top-2 text-xl ${
+              isListening ? 'text-red-600 animate-pulse' : 'text-slate-400 dark:text-slate-500'
+            }`}
+            title="Speak your question"
+          >
+            🎤
+          </button>
+        </div>
         <button
           type="submit"
           disabled={loading}
-          className="bg-blue-600 text-white rounded p-2 font-semibold disabled:opacity-50"
+          className="bg-teal-600 hover:bg-teal-700 text-white rounded p-2 font-semibold
+                     disabled:opacity-50 transition"
         >
           {loading ? t('chatAsking') : t('chatAskButton')}
         </button>
       </form>
 
-      {error && <p className="text-red-600 mt-4">{error}</p>}
+      {error && <p className="text-red-600 dark:text-red-400 mt-4">{error}</p>}
 
       {answer && (
-        <div className="mt-6 bg-gray-100 rounded p-4 whitespace-pre-wrap">
+        <div className="mt-6 bg-slate-100 dark:bg-slate-800
+                         text-slate-900 dark:text-slate-100
+                         border border-slate-200 dark:border-slate-700
+                         rounded p-4 whitespace-pre-wrap">
           {answer}
         </div>
       )}
-
-      
     </div>
   )
 }
