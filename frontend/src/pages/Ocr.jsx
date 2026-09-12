@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import axios from 'axios'
+import { useLanguage } from '../context/LanguageContext'
 
 function Ocr() {
   const [file, setFile] = useState(null)
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const { t } = useLanguage()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -24,7 +26,7 @@ function Ocr() {
       })
       setResult(response.data)
     } catch (err) {
-      setError('Something went wrong. Please try again.')
+      setError(t('errorGeneric'))
     } finally {
       setLoading(false)
     }
@@ -33,7 +35,7 @@ function Ocr() {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4 text-slate-900 dark:text-slate-100">
-        Prescription Reader (OCR)
+        {t('ocrTitle')}
       </h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
@@ -56,7 +58,7 @@ function Ocr() {
           className="bg-teal-600 hover:bg-teal-700 text-white rounded p-2 font-semibold
                      disabled:opacity-50 transition"
         >
-          {loading ? 'Reading prescription...' : 'Upload & Read'}
+          {loading ? t('ocrReading') : t('ocrButton')}
         </button>
       </form>
 
@@ -65,11 +67,11 @@ function Ocr() {
       {result && (
         <div className="mt-6">
           <h2 className="font-semibold mb-2 text-slate-900 dark:text-slate-100">
-            Matched Medicines
+            {t('ocrMatchedMedicines')}
           </h2>
           {result.matched_medicines.length === 0 ? (
             <p className="text-slate-600 dark:text-slate-400">
-              No medicines from our database were confidently matched. Please double-check with your pharmacist.
+              {t('ocrNoMatch')}
             </p>
           ) : (
             <div className="flex flex-col gap-3">
@@ -84,10 +86,10 @@ function Ocr() {
                     {med.generic_name} ({med.brand_name})
                   </div>
                   <div className="text-sm mt-1 text-slate-700 dark:text-slate-300">
-                    <span className="font-medium">Purpose:</span> {med.purpose}
+                    <span className="font-medium">{t('ocrPurpose')}</span> {med.purpose}
                   </div>
                   <div className="text-sm mt-1 text-slate-700 dark:text-slate-300">
-                    <span className="font-medium">Dosage:</span> {med.verified_dosage}
+                    <span className="font-medium">{t('ocrDosage')}</span> {med.verified_dosage}
                   </div>
                 </div>
               ))}
@@ -96,7 +98,7 @@ function Ocr() {
 
           <details className="mt-4">
             <summary className="cursor-pointer text-sm text-slate-500 dark:text-slate-400">
-              View raw extracted text
+              {t('ocrViewRaw')}
             </summary>
             <pre className="text-xs bg-slate-50 dark:bg-slate-800
                              text-slate-700 dark:text-slate-300
