@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 import { Link } from 'react-router-dom'
+import { useLanguage } from '../context/LanguageContext'
 
 function Reminders() {
   const { token, isLoggedIn } = useAuth()
@@ -15,6 +16,7 @@ function Reminders() {
     typeof Notification !== 'undefined' ? Notification.permission : 'unsupported'
   )
   const notifiedToday = useRef(new Set())
+  const { t } = useLanguage()
 
   const authHeaders = { headers: { Authorization: `Bearer ${token}` } }
 
@@ -23,7 +25,7 @@ function Reminders() {
     axios
       .get('http://127.0.0.1:8000/reminders', authHeaders)
       .then((res) => setReminders(res.data))
-      .catch(() => setError('Could not load reminders.'))
+      .catch(() => setError(t('remindersLoadError')))
   }
 
   useEffect(() => {
@@ -72,7 +74,7 @@ function Reminders() {
       setTimeOfDay('')
       loadReminders()
     } catch (err) {
-      setError('Could not create reminder.')
+      setError(t('remindersCreateError'))
     }
   }
 
@@ -81,7 +83,7 @@ function Reminders() {
       await axios.delete(`http://127.0.0.1:8000/reminders/${id}`, authHeaders)
       loadReminders()
     } catch (err) {
-      setError('Could not delete reminder.')
+      setError(t('remindersDeleteError'))
     }
   }
 
@@ -89,14 +91,14 @@ function Reminders() {
     return (
       <div>
         <h1 className="text-2xl font-bold mb-4 text-slate-900 dark:text-slate-100">
-          Reminders
+          {t('remindersPageTitle')}
         </h1>
         <p className="text-slate-700 dark:text-slate-300">
-          Please{' '}
+          {t('remindersLoginPromptPrefix')}{' '}
           <Link to="/login" className="text-teal-600 dark:text-teal-400 hover:underline">
-            log in
+            {t('remindersLoginLinkText')}
           </Link>{' '}
-          to set medicine reminders.
+          {t('remindersLoginSuffix')}
         </p>
       </div>
     )
@@ -105,7 +107,7 @@ function Reminders() {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4 text-slate-900 dark:text-slate-100">
-        Medicine Reminders
+        {t('remindersPageTitle')}
       </h1>
 
       {notifPermission !== 'granted' && notifPermission !== 'unsupported' && (
@@ -113,23 +115,23 @@ function Reminders() {
                          border border-amber-300 dark:border-amber-700
                          text-amber-900 dark:text-amber-200
                          rounded p-3 mb-4 text-sm">
-          Enable browser notifications to get reminded when it's time to take your medicine.
+          {t('remindersEnableNotif')}
           <button
             onClick={requestPermission}
             className="ml-2 text-amber-700 dark:text-amber-300 hover:underline font-semibold"
           >
-            Enable Notifications
+            {t('remindersEnableButton')}
           </button>
         </div>
       )}
       <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
-        Note: notifications only work while this tab is open in your browser.
+        {t('remindersTabNote')}
       </p>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3 max-w-sm mb-8">
         <input
           type="text"
-          placeholder="Medicine name"
+          placeholder={t('remindersMedicinePlaceholder')}
           value={medicineName}
           onChange={(e) => setMedicineName(e.target.value)}
           className="border border-slate-300 dark:border-slate-600
@@ -142,7 +144,7 @@ function Reminders() {
         />
         <input
           type="text"
-          placeholder="Dosage note (e.g. 1 tablet after food)"
+          placeholder={t('remindersDosagePlaceholder')}
           value={dosageNote}
           onChange={(e) => setDosageNote(e.target.value)}
           className="border border-slate-300 dark:border-slate-600
@@ -172,15 +174,15 @@ function Reminders() {
                      rounded p-2
                      focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
         >
-          <option value="daily">Daily</option>
-          <option value="twice_daily">Twice Daily</option>
-          <option value="weekly">Weekly</option>
+          <option value="daily">{t('remindersFreqDaily')}</option>
+          <option value="twice_daily">{t('remindersFreqTwice')}</option>
+          <option value="weekly">{t('remindersFreqWeekly')}</option>
         </select>
         <button
           type="submit"
           className="bg-amber-500 hover:bg-amber-600 text-white rounded p-2 font-semibold transition"
         >
-          Add Reminder
+          {t('remindersAddButton')}
         </button>
       </form>
 
@@ -188,7 +190,7 @@ function Reminders() {
 
       <div className="flex flex-col gap-3">
         {reminders.length === 0 && (
-          <p className="text-slate-600 dark:text-slate-400">No reminders set yet.</p>
+          <p className="text-slate-600 dark:text-slate-400">{t('remindersEmpty')}</p>
         )}
         {reminders.map((r) => (
           <div
@@ -209,7 +211,7 @@ function Reminders() {
               onClick={() => handleDelete(r.id)}
               className="text-red-600 dark:text-red-400 text-sm hover:underline"
             >
-              Delete
+              {t('remindersDelete')}
             </button>
           </div>
         ))}

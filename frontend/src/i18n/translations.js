@@ -77,6 +77,10 @@ export const translations = {
     remindersAddButton: 'Add Reminder',
     remindersEmpty: 'No reminders set yet.',
     remindersDelete: 'Delete',
+    historyLoadError: 'Could not load history.',
+    remindersLoadError: 'Could not load reminders.',
+    remindersCreateError: 'Could not create reminder.',
+    remindersDeleteError: 'Could not delete reminder.',
   },
   hi: {
     appName: 'फार्मएजेंट',
@@ -156,6 +160,10 @@ export const translations = {
     remindersAddButton: 'अनुस्मारक जोड़ें',
     remindersEmpty: 'अभी तक कोई अनुस्मारक सेट नहीं है।',
     remindersDelete: 'हटाएं',
+    historyLoadError: 'इतिहास लोड नहीं हो सका।',
+    remindersLoadError: 'अनुस्मारक लोड नहीं हो सके।',
+    remindersCreateError: 'अनुस्मारक नहीं बनाया जा सका।',
+    remindersDeleteError: 'अनुस्मारक हटाया नहीं जा सका।',
   },
   mr: {
     appName: 'फार्मएजंट',
@@ -235,5 +243,9 @@ export const translations = {
     remindersAddButton: 'स्मरणपत्र जोडा',
     remindersEmpty: 'अद्याप कोणतेही स्मरणपत्र सेट केलेले नाही.',
     remindersDelete: 'हटवा',
+    historyLoadError: 'इतिहास लोड करता आला नाही.',
+    remindersLoadError: 'स्मरणपत्रे लोड करता आली नाहीत.',
+    remindersCreateError: 'स्मरणपत्र तयार करता आले नाही.',
+    remindersDeleteError: 'स्मरणपत्र हटवता आले नाही.',
   },
 }
