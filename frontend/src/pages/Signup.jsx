@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
+import { useLanguage } from '../context/LanguageContext'
 
 function Signup() {
   const [email, setEmail] = useState('')
@@ -10,6 +11,7 @@ function Signup() {
   const [loading, setLoading] = useState(false)
   const { login } = useAuth()
   const navigate = useNavigate()
+  const { t } = useLanguage()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -25,7 +27,7 @@ function Signup() {
         navigate('/')
       }
     } catch (err) {
-      setError('Something went wrong. Please try again.')
+      setError(t('errorGeneric'))
     } finally {
       setLoading(false)
     }
@@ -34,12 +36,12 @@ function Signup() {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4 text-slate-900 dark:text-slate-100">
-        Sign Up
+        {t('signupTitle')}
       </h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-3 max-w-sm">
         <input
           type="email"
-          placeholder="Email"
+          placeholder={t('loginEmailPlaceholder')}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="border border-slate-300 dark:border-slate-600
@@ -52,7 +54,7 @@ function Signup() {
         />
         <input
           type="password"
-          placeholder="Password (min 8 characters)"
+          placeholder={t('signupPasswordPlaceholder')}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="border border-slate-300 dark:border-slate-600
@@ -70,14 +72,14 @@ function Signup() {
           className="bg-teal-600 hover:bg-teal-700 text-white rounded p-2 font-semibold
                      disabled:opacity-50 transition"
         >
-          {loading ? 'Creating account...' : 'Sign Up'}
+          {loading ? t('signupCreating') : t('signupButton')}
         </button>
       </form>
       {error && <p className="text-red-600 dark:text-red-400 mt-4">{error}</p>}
       <p className="mt-4 text-sm text-slate-700 dark:text-slate-300">
-        Already have an account?{' '}
+        {t('signupHaveAccount')}{' '}
         <Link to="/login" className="text-teal-600 dark:text-teal-400 hover:underline">
-          Log in
+          {t('signupLoginLink')}
         </Link>
       </p>
     </div>
