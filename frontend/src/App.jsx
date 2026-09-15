@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, NavLink, Navigate } from 'react-router-dom'
 import Chat from './pages/Chat'
 import Interactions from './pages/Interactions'
 import Symptoms from './pages/Symptoms'
@@ -7,6 +7,7 @@ import Home from './pages/Home'
 import { AuthProvider } from './context/AuthContext'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import ProfileSetup from './pages/ProfileSetup'
 import { useAuth } from './context/AuthContext'
 import History from './pages/History'
 import Reminders from './pages/Reminders'
@@ -24,13 +25,17 @@ function Navbar() {
   return (
     <nav className="bg-teal-600 dark:bg-teal-800 text-white p-4 flex gap-6 items-center flex-wrap">
       <span className="font-bold text-lg">{t('appName')}</span>
-      <NavLink to="/" className={linkClass}>{t('navHome')}</NavLink>
-      <NavLink to="/chat" className={linkClass}>{t('navChat')}</NavLink>
-      <NavLink to="/interactions" className={linkClass}>{t('navInteractions')}</NavLink>
-      <NavLink to="/symptoms" className={linkClass}>{t('navSymptoms')}</NavLink>
-      <NavLink to="/ocr" className={linkClass}>{t('navOcr')}</NavLink>
-      <NavLink to="/history" className={linkClass}>{t('navHistory')}</NavLink>
-      <NavLink to="/reminders" className={linkClass}>{t('navReminders')}</NavLink>
+      {isLoggedIn && (
+        <>
+          <NavLink to="/" className={linkClass}>{t('navHome')}</NavLink>
+          <NavLink to="/chat" className={linkClass}>{t('navChat')}</NavLink>
+          <NavLink to="/interactions" className={linkClass}>{t('navInteractions')}</NavLink>
+          <NavLink to="/symptoms" className={linkClass}>{t('navSymptoms')}</NavLink>
+          <NavLink to="/ocr" className={linkClass}>{t('navOcr')}</NavLink>
+          <NavLink to="/history" className={linkClass}>{t('navHistory')}</NavLink>
+          <NavLink to="/reminders" className={linkClass}>{t('navReminders')}</NavLink>
+        </>
+      )}
 
       <select
         value={language}
@@ -47,15 +52,10 @@ function Navbar() {
       </button>
 
       <span className="ml-auto flex gap-4 items-center">
-        {isLoggedIn ? (
+        {isLoggedIn && (
           <>
             <span className="text-sm text-teal-50">{email}</span>
             <button onClick={logout} className="hover:underline text-sm">{t('navLogout')}</button>
-          </>
-        ) : (
-          <>
-            <NavLink to="/login" className={linkClass}>{t('navLogin')}</NavLink>
-            <NavLink to="/signup" className={linkClass}>{t('navSignup')}</NavLink>
           </>
         )}
       </span>
@@ -72,6 +72,30 @@ function Footer() {
   )
 }
 
+// Gates any route behind login + a completed profile.
+// Not logged in -> /login. Logged in but no profile -> /profile-setup.
+function RequireAuth({ children }) {
+  const { isLoggedIn, profileComplete } = useAuth()
+
+  if (!isLoggedIn) {
+    return <Navigate to="/login" replace />
+  }
+  if (!profileComplete) {
+    return <Navigate to="/profile-setup" replace />
+  }
+  return children
+}
+
+// For /login and /signup: if already fully set up, skip straight to Home
+// instead of showing the auth forms again.
+function RedirectIfAuthed({ children }) {
+  const { isLoggedIn, profileComplete } = useAuth()
+
+  if (isLoggedIn && profileComplete) {
+    return <Navigate to="/" replace />
+  }
+  return children
+}
 
 function App() {
   return (
@@ -83,15 +107,17 @@ function App() {
     <Navbar />
     <div className="max-w-2xl mx-auto p-6 min-h-[70vh]">
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/chat" element={<Chat />} />
-        <Route path="/interactions" element={<Interactions />} />
-        <Route path="/symptoms" element={<Symptoms />} />
-        <Route path="/ocr" element={<Ocr />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/history" element={<History />} />
-        <Route path="/reminders" element={<Reminders />} />
+        <Route path="/login" element={<RedirectIfAuthed><Login /></RedirectIfAuthed>} />
+        <Route path="/signup" element={<RedirectIfAuthed><Signup /></RedirectIfAuthed>} />
+        <Route path="/profile-setup" element={<ProfileSetup />} />
+
+        <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
+        <Route path="/chat" element={<RequireAuth><Chat /></RequireAuth>} />
+        <Route path="/interactions" element={<RequireAuth><Interactions /></RequireAuth>} />
+        <Route path="/symptoms" element={<RequireAuth><Symptoms /></RequireAuth>} />
+        <Route path="/ocr" element={<RequireAuth><Ocr /></RequireAuth>} />
+        <Route path="/history" element={<RequireAuth><History /></RequireAuth>} />
+        <Route path="/reminders" element={<RequireAuth><Reminders /></RequireAuth>} />
       </Routes>
     </div>
     <Footer />
