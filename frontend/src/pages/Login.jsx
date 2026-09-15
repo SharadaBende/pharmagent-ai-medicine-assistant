@@ -13,25 +13,26 @@ function Login() {
   const navigate = useNavigate()
   const { t } = useLanguage()
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
 
-    try {
-      const response = await axios.post('http://127.0.0.1:8000/login', { email, password })
-      if (response.data.error) {
-        setError(response.data.error)
-      } else {
-        login(response.data.access_token, email)
-        navigate('/')
-      }
-    } catch (err) {
-      setError(t('errorGeneric'))
-    } finally {
-      setLoading(false)
+  const handleSubmit = async (e) => {
+  e.preventDefault()
+  setLoading(true)
+  setError('')
+
+  try {
+    const response = await axios.post('http://127.0.0.1:8000/login', { email, password })
+    if (response.data.error) {
+      setError(response.data.error)
+    } else {
+      login(response.data.access_token, email, response.data.profile_complete)
+      navigate(response.data.profile_complete ? '/' : '/profile-setup')
     }
+  } catch (err) {
+    setError(t('errorGeneric'))
+  } finally {
+    setLoading(false)
   }
+}
 
   return (
     <div>
