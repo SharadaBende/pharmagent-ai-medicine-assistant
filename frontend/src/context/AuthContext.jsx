@@ -5,6 +5,9 @@ const AuthContext = createContext(null)
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(localStorage.getItem('token'))
   const [email, setEmail] = useState(localStorage.getItem('email'))
+  const [profileComplete, setProfileComplete] = useState(
+    localStorage.getItem('profileComplete') === 'true'
+  )
 
   useEffect(() => {
     if (token) {
@@ -22,18 +25,38 @@ export function AuthProvider({ children }) {
     }
   }, [email])
 
-  const login = (newToken, userEmail) => {
+  useEffect(() => {
+    localStorage.setItem('profileComplete', profileComplete ? 'true' : 'false')
+  }, [profileComplete])
+
+  const login = (newToken, userEmail, isProfileComplete = false) => {
     setToken(newToken)
     setEmail(userEmail)
+    setProfileComplete(isProfileComplete)
   }
 
   const logout = () => {
     setToken(null)
     setEmail(null)
+    setProfileComplete(false)
+  }
+
+  const markProfileComplete = () => {
+    setProfileComplete(true)
   }
 
   return (
-    <AuthContext.Provider value={{ token, email, login, logout, isLoggedIn: !!token }}>
+    <AuthContext.Provider
+      value={{
+        token,
+        email,
+        login,
+        logout,
+        isLoggedIn: !!token,
+        profileComplete,
+        markProfileComplete,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )
