@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 import { Link } from 'react-router-dom'
+import { useLanguage } from '../context/LanguageContext'
 
 function History() {
   const { token, isLoggedIn } = useAuth()
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const { t } = useLanguage()
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -28,14 +30,14 @@ function History() {
     return (
       <div>
         <h1 className="text-2xl font-bold mb-4 text-slate-900 dark:text-slate-100">
-          Your History
+          {t('historyTitle')}
         </h1>
         <p className="text-slate-700 dark:text-slate-300">
-          Please{' '}
+          {t('historyLoginPrompt')}{' '}
           <Link to="/login" className="text-teal-600 dark:text-teal-400 hover:underline">
-            log in
+            {t('historyLoginLinkText')}
           </Link>{' '}
-          to view your medicine question history.
+          {t('historyLoginSuffix')}
         </p>
       </div>
     )
@@ -44,16 +46,14 @@ function History() {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4 text-slate-900 dark:text-slate-100">
-        Your History
+        {t('historyTitle')}
       </h1>
 
-      {loading && <p className="text-slate-600 dark:text-slate-400">Loading...</p>}
+      {loading && <p className="text-slate-600 dark:text-slate-400">{t('historyLoading')}</p>}
       {error && <p className="text-red-600 dark:text-red-400">{error}</p>}
 
       {!loading && history.length === 0 && (
-        <p className="text-slate-600 dark:text-slate-400">
-          No history yet — questions you ask in Chat will show up here.
-        </p>
+        <p className="text-slate-600 dark:text-slate-400">{t('historyEmpty')}</p>
       )}
 
       <div className="flex flex-col gap-4">
@@ -73,7 +73,7 @@ function History() {
               </div>
             </div>
             <div className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-              Q: {entry.question}
+              {t('historyQuestionLabel')} {entry.question}
             </div>
             <div className="text-sm mt-2 whitespace-pre-wrap text-slate-700 dark:text-slate-300">
               {entry.answer}
