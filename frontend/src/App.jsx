@@ -72,13 +72,11 @@ function Footer() {
   )
 }
 
-// Gates any route behind login + a completed profile.
-// Not logged in -> /login. Logged in but no profile -> /profile-setup.
 function RequireAuth({ children }) {
   const { isLoggedIn, profileComplete } = useAuth()
 
   if (!isLoggedIn) {
-    return <Navigate to="/login" replace />
+    return <Navigate to="/signup" replace />
   }
   if (!profileComplete) {
     return <Navigate to="/profile-setup" replace />
