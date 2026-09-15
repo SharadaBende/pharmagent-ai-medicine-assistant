@@ -76,6 +76,19 @@ class Reminder(Base):
     frequency = Column(String)    # e.g. "daily"
 
 
+class UserProfile(Base):
+    __tablename__ = "user_profiles"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, unique=True, index=True)
+    full_name = Column(String)
+    age = Column(Integer)
+    gender = Column(String)
+    allergies = Column(Text)
+    current_medications = Column(Text)
+    chronic_conditions = Column(Text)
+
+
 def init_db():
     Base.metadata.create_all(bind=engine)
 

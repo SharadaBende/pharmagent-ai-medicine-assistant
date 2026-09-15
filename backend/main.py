@@ -20,6 +20,7 @@ from database import User, MedicineHistory
 from datetime import datetime
 from interaction_service import check_multiple_interactions
 from database import Reminder
+from database import UserProfile
 
 
 def get_optional_user(authorization: Optional[str] = Header(None)):
@@ -76,6 +77,7 @@ class ReminderRequest(BaseModel):
     time_of_day: str
     frequency: str
 
+
 @app.post("/symptoms")
 def symptoms(request: SymptomRequest):
     return suggest_for_symptom(request.symptom)
@@ -127,8 +129,6 @@ async def ocr_prescription(file: UploadFile = File(...)):
     return result
 
 
-from database import SessionLocal
-
 @app.post("/signup")
 def signup(request: SignupRequest):
     db = SessionLocal()
@@ -143,10 +143,11 @@ def signup(request: SignupRequest):
     )
     db.add(new_user)
     db.commit()
+    db.refresh(new_user)
     db.close()
 
     token = create_access_token({"sub": request.email})
-    return {"access_token": token, "token_type": "bearer"}
+    return {"access_token": token, "token_type": "bearer", "profile_complete": False}
 
 @app.post("/login")
 def login(request: LoginRequest):
@@ -158,7 +159,11 @@ def login(request: LoginRequest):
         return {"error": "Invalid email or password."}
 
     token = create_access_token({"sub": request.email})
-    return {"access_token": token, "token_type": "bearer"}
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "profile_complete": has_profile(user.id),
+    }
 
 
 @app.get("/me")
@@ -240,3 +245,70 @@ def delete_reminder(reminder_id: int, current_user: User = Depends(get_current_u
     db.commit()
     db.close()
     return {"deleted": True}
+
+
+
+
+class ProfileRequest(BaseModel):
+    full_name: str
+    age: int
+    gender: str
+    allergies: str = ""
+    current_medications: str = ""
+    chronic_conditions: str = ""
+
+
+def has_profile(user_id: int) -> bool:
+    db = SessionLocal()
+    exists = db.query(UserProfile).filter(UserProfile.user_id == user_id).first() is not None
+    db.close()
+    return exists
+
+
+@app.post("/profile")
+def create_or_update_profile(request: ProfileRequest, current_user: User = Depends(get_current_user)):
+    db = SessionLocal()
+    profile = db.query(UserProfile).filter(UserProfile.user_id == current_user.id).first()
+
+    if profile:
+        profile.full_name = request.full_name
+        profile.age = request.age
+        profile.gender = request.gender
+        profile.allergies = request.allergies
+        profile.current_medications = request.current_medications
+        profile.chronic_conditions = request.chronic_conditions
+    else:
+        profile = UserProfile(
+            user_id=current_user.id,
+            full_name=request.full_name,
+            age=request.age,
+            gender=request.gender,
+            allergies=request.allergies,
+            current_medications=request.current_medications,
+            chronic_conditions=request.chronic_conditions,
+        )
+        db.add(profile)
+
+    db.commit()
+    db.close()
+    return {"success": True}
+
+
+@app.get("/profile")
+def get_profile(current_user: User = Depends(get_current_user)):
+    db = SessionLocal()
+    profile = db.query(UserProfile).filter(UserProfile.user_id == current_user.id).first()
+    db.close()
+
+    if not profile:
+        return {"exists": False}
+
+    return {
+        "exists": True,
+        "full_name": profile.full_name,
+        "age": profile.age,
+        "gender": profile.gender,
+        "allergies": profile.allergies,
+        "current_medications": profile.current_medications,
+        "chronic_conditions": profile.chronic_conditions,
+    }
