@@ -79,8 +79,9 @@ class ReminderRequest(BaseModel):
 
 
 @app.post("/symptoms")
-def symptoms(request: SymptomRequest):
-    return suggest_for_symptom(request.symptom)
+def symptoms(request: SymptomRequest, current_user: Optional[User] = Depends(get_optional_user)):
+    user_profile = get_user_profile_dict(current_user.id) if current_user else None
+    return suggest_for_symptom(request.symptom, user_profile)
 
 @app.post("/interactions")
 def interactions(request: InteractionRequest):
@@ -98,7 +99,8 @@ def health_check():
 
 @app.post("/chat")
 def chat(request: ChatRequest, current_user: Optional[User] = Depends(get_optional_user)):
-    result = ask_about_medicine(request.question, request.medicine_name, request.language)
+    user_profile = get_user_profile_dict(current_user.id) if current_user else None
+    result = ask_about_medicine(request.question, request.medicine_name, request.language, user_profile)
 
     if current_user:
         db = SessionLocal()
