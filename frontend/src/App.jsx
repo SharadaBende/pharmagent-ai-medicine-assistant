@@ -19,6 +19,35 @@ function Navbar() {
   const { isLoggedIn, email, fullName, logout } = useAuth()
   const { language, changeLanguage, t } = useLanguage()
   const { isDark, toggleTheme } = useTheme()
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef(null)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const getInitials = () => {
+    if (fullName) {
+      const parts = fullName.trim().split(/\s+/)
+      return parts.length >= 2
+        ? (parts[0][0] + parts[1][0]).toUpperCase()
+        : parts[0].slice(0, 2).toUpperCase()
+    }
+    return email ? email[0].toUpperCase() : '?'
+  }
+
+  const handleLogout = () => {
+    setMenuOpen(false)
+    logout()
+    navigate('/signup')
+  }
 
   const linkClass = ({ isActive }) =>
     `hover:underline ${isActive ? 'underline font-semibold text-white' : 'text-teal-50'}`
@@ -52,17 +81,48 @@ function Navbar() {
         {isDark ? '☀️' : '🌙'}
       </button>
 
-      <span className="ml-auto flex gap-4 items-center">
-        {isLoggedIn && (
-          <>
-            <span className="text-sm text-teal-50">{fullName || email}</span>
-            <button onClick={logout} className="hover:underline text-sm">{t('navLogout')}</button>
-          </>
-        )}
-      </span>
+      {isLoggedIn && (
+        <div ref={menuRef} className="ml-auto relative">
+          <button
+            onClick={() => setMenuOpen((o) => !o)}
+            className="w-9 h-9 rounded-full bg-amber-500 text-white font-semibold
+                       flex items-center justify-center text-sm
+                       hover:bg-amber-600 transition"
+            title={fullName || email}
+          >
+            {getInitials()}
+          </button>
+
+          {menuOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800
+                             border border-slate-200 dark:border-slate-700
+                             rounded-lg shadow-lg overflow-hidden text-sm z-20">
+              <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-700
+                               text-slate-900 dark:text-slate-100 font-medium truncate">
+                {fullName || email}
+              </div>
+              <button
+                onClick={() => { setMenuOpen(false); navigate('/profile') }}
+                className="w-full text-left px-4 py-2 text-slate-700 dark:text-slate-300
+                           hover:bg-slate-50 dark:hover:bg-slate-700"
+              >
+                {t('navProfile')}
+              </button>
+              <button
+                onClick={handleLogout}
+                className="w-full text-left px-4 py-2 text-red-600 dark:text-red-400
+                           hover:bg-slate-50 dark:hover:bg-slate-700"
+              >
+                {t('navLogout')}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </nav>
   )
 }
+
 
 function Footer() {
   const { t } = useLanguage()
