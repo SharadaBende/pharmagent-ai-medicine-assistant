@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
@@ -20,8 +19,6 @@ const CONDITION_OPTIONS = [
   'Peptic ulcer disease', 'Osteoporosis', 'Pregnancy', 'Breastfeeding',
 ]
 
-// Splits a saved "Penicillin, Peanuts, Cat dander" string into
-// known checkbox items vs. anything typed as "Other" that isn't in the list.
 function splitSavedList(savedString, knownOptions) {
   if (!savedString) return { known: [], other: '' }
   const items = savedString.split(',').map((s) => s.trim()).filter(Boolean)
@@ -30,10 +27,30 @@ function splitSavedList(savedString, knownOptions) {
   return { known, other }
 }
 
+function getInitials(fullName) {
+  if (!fullName) return '?'
+  const parts = fullName.trim().split(/\s+/)
+  return parts.length >= 2
+    ? (parts[0][0] + parts[1][0]).toUpperCase()
+    : parts[0].slice(0, 2).toUpperCase()
+}
+
+const GENDER_LABELS = {
+  female: 'profileGenderFemale',
+  male: 'profileGenderMale',
+  other: 'profileGenderOther',
+  prefer_not_to_say: 'profileGenderPreferNot',
+}
+
 function Profile() {
   const { token } = useAuth()
-  const navigate = useNavigate()
   const { t } = useLanguage()
+
+  const [editing, setEditing] = useState(false)
+  const [fetching, setFetching] = useState(true)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const [fullName, setFullName] = useState('')
   const [age, setAge] = useState('')
@@ -43,12 +60,8 @@ function Profile() {
   const [selectedConditions, setSelectedConditions] = useState([])
   const [otherCondition, setOtherCondition] = useState('')
   const [currentMedications, setCurrentMedications] = useState('')
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [fetching, setFetching] = useState(true)
 
-  useEffect(() => {
+  const loadProfile = () => {
     axios
       .get('http://127.0.0.1:8000/profile', {
         headers: { Authorization: `Bearer ${token}` },
@@ -71,6 +84,10 @@ function Profile() {
       })
       .catch(() => setError(t('errorGeneric')))
       .finally(() => setFetching(false))
+  }
+
+  useEffect(() => {
+    loadProfile()
   }, [token])
 
   const handleSubmit = async (e) => {
@@ -96,6 +113,7 @@ function Profile() {
         { headers: { Authorization: `Bearer ${token}` } }
       )
       setSuccess(true)
+      setEditing(false)
     } catch (err) {
       setError(t('errorGeneric'))
     } finally {
@@ -107,14 +125,105 @@ function Profile() {
     return <p className="text-slate-600 dark:text-slate-400">{t('profileLoading')}</p>
   }
 
+  const allergyPills = [...selectedAllergies, ...(otherAllergy.trim() ? [otherAllergy.trim()] : [])]
+  const conditionPills = [...selectedConditions, ...(otherCondition.trim() ? [otherCondition.trim()] : [])]
+
+  // ---------- VIEW MODE ----------
+  if (!editing) {
+    return (
+      <div>
+        {success && (
+          <p className="text-teal-700 dark:text-teal-400 mb-4">{t('profileUpdateSuccess')}</p>
+        )}
+
+        <div className="flex items-center gap-4 mb-6">
+          <div className="w-16 h-16 rounded-full bg-amber-500 text-white font-semibold
+                           flex items-center justify-center text-xl shrink-0">
+            {getInitials(fullName)}
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+              {fullName || '—'}
+            </h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              {age && `${age} · `}
+              {gender ? t(GENDER_LABELS[gender]) : ''}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-5 max-w-md">
+          <div>
+            <div className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">
+              {t('profileAllergiesLabel')}
+            </div>
+            {allergyPills.length === 0 ? (
+              <p className="text-sm text-slate-400 dark:text-slate-500">{t('profileNoneListed')}</p>
+            ) : (
+              <div className="flex flex-wrap gap-1">
+                {allergyPills.map((item) => (
+                  <span
+                    key={item}
+                    className="bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300
+                               text-xs px-2 py-1 rounded-full"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <div className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">
+              {t('profileConditionsLabel')}
+            </div>
+            {conditionPills.length === 0 ? (
+              <p className="text-sm text-slate-400 dark:text-slate-500">{t('profileNoneListed')}</p>
+            ) : (
+              <div className="flex flex-wrap gap-1">
+                {conditionPills.map((item) => (
+                  <span
+                    key={item}
+                    className="bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300
+                               text-xs px-2 py-1 rounded-full"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <div className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">
+              {t('profileCurrentMedicationsLabel')}
+            </div>
+            <p className="text-sm text-slate-700 dark:text-slate-300">
+              {currentMedications || t('profileNoneListed')}
+            </p>
+          </div>
+
+          <button
+            onClick={() => setEditing(true)}
+            className="bg-teal-600 hover:bg-teal-700 text-white rounded p-2 font-semibold
+                       transition self-start px-6"
+          >
+            {t('profileEditButton')}
+          </button>
+        </div>
+
+        {error && <p className="text-red-600 dark:text-red-400 mt-4">{error}</p>}
+      </div>
+    )
+  }
+
+  // ---------- EDIT MODE ----------
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-2 text-slate-900 dark:text-slate-100">
+      <h1 className="text-2xl font-bold mb-6 text-slate-900 dark:text-slate-100">
         {t('profileEditTitle')}
       </h1>
-      <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
-        {t('profileEditSubtitle')}
-      </p>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5 max-w-md">
         <input
@@ -222,19 +331,28 @@ function Profile() {
                      focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
         />
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-teal-600 hover:bg-teal-700 text-white rounded p-2 font-semibold
-                     disabled:opacity-50 transition"
-        >
-          {loading ? t('profileSaving') : t('profileUpdateButton')}
-        </button>
+        <div className="flex gap-3">
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-teal-600 hover:bg-teal-700 text-white rounded p-2 font-semibold
+                       disabled:opacity-50 transition flex-1"
+          >
+            {loading ? t('profileSaving') : t('profileUpdateButton')}
+          </button>
+          <button
+            type="button"
+            onClick={() => { setEditing(false); loadProfile() }}
+            className="border border-slate-300 dark:border-slate-600
+                       text-slate-700 dark:text-slate-300
+                       rounded p-2 font-semibold hover:bg-slate-50 dark:hover:bg-slate-700
+                       transition px-6"
+          >
+            {t('profileCancelButton')}
+          </button>
+        </div>
       </form>
 
-      {success && (
-        <p className="text-teal-700 dark:text-teal-400 mt-4">{t('profileUpdateSuccess')}</p>
-      )}
       {error && <p className="text-red-600 dark:text-red-400 mt-4">{error}</p>}
     </div>
   )
