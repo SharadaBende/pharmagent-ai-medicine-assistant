@@ -23,6 +23,23 @@ from database import Reminder
 from database import UserProfile
 
 
+
+
+def get_user_profile_dict(user_id: int) -> Optional[dict]:
+    db = SessionLocal()
+    profile = db.query(UserProfile).filter(UserProfile.user_id == user_id).first()
+    db.close()
+
+    if not profile:
+        return None
+
+    return {
+        "allergies": profile.allergies,
+        "current_medications": profile.current_medications,
+        "chronic_conditions": profile.chronic_conditions,
+    }
+
+
 def get_optional_user(authorization: Optional[str] = Header(None)):
     if not authorization or not authorization.startswith("Bearer "):
         return None
