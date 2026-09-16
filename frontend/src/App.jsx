@@ -13,10 +13,10 @@ import History from './pages/History'
 import Reminders from './pages/Reminders'
 import { LanguageProvider, useLanguage } from './context/LanguageContext'
 import { ThemeProvider, useTheme } from './context/ThemeContext'
-const { isLoggedIn, email, fullName, logout } = useAuth()
+
 
 function Navbar() {
-  const { isLoggedIn, email, logout } = useAuth()
+  const { isLoggedIn, email, fullName, logout } = useAuth()
   const { language, changeLanguage, t } = useLanguage()
   const { isDark, toggleTheme } = useTheme()
 
