@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, NavLink, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, NavLink, Navigate, useNavigate } from 'react-router-dom'
+import { useState, useRef, useEffect } from 'react'
 import Chat from './pages/Chat'
 import Interactions from './pages/Interactions'
 import Symptoms from './pages/Symptoms'
