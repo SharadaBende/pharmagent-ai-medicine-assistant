@@ -14,6 +14,7 @@ import History from './pages/History'
 import Reminders from './pages/Reminders'
 import { LanguageProvider, useLanguage } from './context/LanguageContext'
 import { ThemeProvider, useTheme } from './context/ThemeContext'
+import Profile from './pages/Profile'
 
 
 function Navbar() {
@@ -192,6 +193,7 @@ function App() {
         <Route path="/ocr" element={<RequireAuth><Ocr /></RequireAuth>} />
         <Route path="/history" element={<RequireAuth><History /></RequireAuth>} />
         <Route path="/reminders" element={<RequireAuth><Reminders /></RequireAuth>} />
+        <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
       </Routes>
     </div>
     <Footer />
