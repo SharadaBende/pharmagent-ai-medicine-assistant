@@ -72,6 +72,8 @@ function Footer() {
   )
 }
 
+// Gates any route behind login + a completed profile.
+// Not logged in -> /signup. Logged in but no profile -> /profile-setup.
 function RequireAuth({ children }) {
   const { isLoggedIn, profileComplete } = useAuth()
 
@@ -95,6 +97,18 @@ function RedirectIfAuthed({ children }) {
   return children
 }
 
+// For /profile-setup: only needs login, not a completed profile
+// (that's the whole point of this page) — but still needs to kick
+// out a logged-out user, e.g. after they log out while sitting here.
+function RequireLogin({ children }) {
+  const { isLoggedIn } = useAuth()
+
+  if (!isLoggedIn) {
+    return <Navigate to="/signup" replace />
+  }
+  return children
+}
+
 function App() {
   return (
     <ThemeProvider>
@@ -107,7 +121,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<RedirectIfAuthed><Login /></RedirectIfAuthed>} />
         <Route path="/signup" element={<RedirectIfAuthed><Signup /></RedirectIfAuthed>} />
-        <Route path="/profile-setup" element={<ProfileSetup />} />
+        <Route path="/profile-setup" element={<RequireLogin><ProfileSetup /></RequireLogin>} />
 
         <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
         <Route path="/chat" element={<RequireAuth><Chat /></RequireAuth>} />
