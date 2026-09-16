@@ -25,6 +25,7 @@ Strict rules:
 - Suggest only general OTC categories (e.g., "pain reliever/fever reducer", "antihistamine", "acid reducer") — never a specific brand name, dosage, or frequency.
 - Never diagnose a condition.
 - If the symptom sounds serious, unusual, or persistent, recommend seeing a doctor instead of suggesting medicine.
+- If the user's known allergies or conditions are provided and are relevant, gently note that connection and suggest they be extra cautious or consult a pharmacist first — but never state it as a certainty.
 - Always end with a reminder to consult a pharmacist or doctor before taking anything.
 - Keep the answer short and clear.
 """
@@ -33,18 +34,30 @@ def is_emergency(text: str) -> bool:
     text_lower = text.lower()
     return any(keyword in text_lower for keyword in EMERGENCY_KEYWORDS)
 
-def suggest_for_symptom(symptom_text: str):
+def suggest_for_symptom(symptom_text: str, user_profile: dict | None = None):
     if is_emergency(symptom_text):
         return {
             "emergency": True,
             "answer": EMERGENCY_MESSAGE
         }
 
+    profile_context = ""
+    if user_profile:
+        parts = []
+        if user_profile.get("allergies"):
+            parts.append(f"Known allergies: {user_profile['allergies']}")
+        if user_profile.get("chronic_conditions"):
+            parts.append(f"Chronic conditions: {user_profile['chronic_conditions']}")
+        if user_profile.get("current_medications"):
+            parts.append(f"Current medications: {user_profile['current_medications']}")
+        if parts:
+            profile_context = "\n\nRelevant patient context (only mention if actually relevant):\n" + "\n".join(parts)
+
     response = client.chat.completions.create(
         model="openai/gpt-oss-120b",
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": f"Symptom: {symptom_text}"}
+            {"role": "user", "content": f"Symptom: {symptom_text}{profile_context}"}
         ]
     )
 
