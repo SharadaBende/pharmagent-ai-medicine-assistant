@@ -95,6 +95,12 @@ profileCurrentMedications: 'Current medications (optional)',
 profileChronicConditions: 'Chronic conditions (optional)',
 profileSaving: 'Saving...',
 profileSaveButton: 'Save & Continue',
+profileAllergiesLabel: 'Known allergies',
+profileAllergiesPlaceholder: 'Select any known allergies',
+profileConditionsLabel: 'Chronic conditions',
+profileConditionsPlaceholder: 'Select any chronic conditions',
+profileOtherAllergy: 'Other allergy not listed above (optional)',
+profileOtherCondition: 'Other condition not listed above (optional)',
   },
   hi: {
     appName: 'फार्मएजेंट',
@@ -192,6 +198,13 @@ profileCurrentMedications: 'वर्तमान दवाइयां (वै�
 profileChronicConditions: 'पुरानी बीमारियां (वैकल्पिक)',
 profileSaving: 'सहेजा जा रहा है...',
 profileSaveButton: 'सहेजें और जारी रखें',
+profileAllergiesLabel: 'ज्ञात एलर्जी',
+profileAllergiesPlaceholder: 'ज्ञात एलर्जी चुनें',
+profileConditionsLabel: 'पुरानी बीमारियां',
+profileConditionsPlaceholder: 'पुरानी बीमारियां चुनें',
+profileOtherAllergy: 'ऊपर सूचीबद्ध नहीं की गई अन्य एलर्जी (वैकल्पिक)',
+profileOtherCondition: 'ऊपर सूचीबद्ध नहीं की गई अन्य बीमारी (वैकल्पिक)',
+
 
   },
   mr: {
@@ -290,5 +303,11 @@ profileCurrentMedications: 'सध्याची औषधे (ऐच्छि�
 profileChronicConditions: 'दीर्घकालीन आजार (ऐच्छिक)',
 profileSaving: 'जतन करत आहे...',
 profileSaveButton: 'जतन करा आणि पुढे जा',
+profileAllergiesLabel: 'ज्ञात ऍलर्जी',
+profileAllergiesPlaceholder: 'ज्ञात ऍलर्जी निवडा',
+profileConditionsLabel: 'दीर्घकालीन आजार',
+profileConditionsPlaceholder: 'दीर्घकालीन आजार निवडा',
+profileOtherAllergy: 'वर सूचीबद्ध नसलेली इतर ऍलर्जी (ऐच्छिक)',
+profileOtherCondition: 'वर सूचीबद्ध नसलेला इतर आजार (ऐच्छिक)',
   },
 }

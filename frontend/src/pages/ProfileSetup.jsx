@@ -3,6 +3,22 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
+import MultiSelectDropdown from '../components/MultiSelectDropdown'
+
+const ALLERGY_OPTIONS = [
+  'Penicillin', 'Amoxicillin', 'Sulfa drugs', 'Aspirin', 'Ibuprofen / NSAIDs',
+  'Cephalosporins', 'Codeine / Opioids', 'Local anesthetics (e.g. lidocaine)',
+  'Latex', 'Iodine / Contrast dye', 'Peanuts', 'Tree nuts', 'Shellfish', 'Eggs',
+  'Milk / Dairy', 'Soy', 'Wheat / Gluten', 'Pollen', 'Dust mites', 'Pet dander',
+  'Bee / Insect stings', 'Nickel', 'Adhesive tape / Bandages',
+]
+
+const CONDITION_OPTIONS = [
+  'Diabetes (Type 1)', 'Diabetes (Type 2)', 'Hypertension', 'Asthma',
+  'Kidney disease', 'Liver disease', 'Heart disease', 'Thyroid disorder',
+  'Epilepsy / Seizure disorder', 'COPD', 'Anemia', 'Glaucoma',
+  'Peptic ulcer disease', 'Osteoporosis', 'Pregnancy', 'Breastfeeding',
+]
 
 function ProfileSetup() {
   const { token, markProfileComplete } = useAuth()
@@ -12,9 +28,11 @@ function ProfileSetup() {
   const [fullName, setFullName] = useState('')
   const [age, setAge] = useState('')
   const [gender, setGender] = useState('')
-  const [allergies, setAllergies] = useState('')
+  const [selectedAllergies, setSelectedAllergies] = useState([])
+  const [otherAllergy, setOtherAllergy] = useState('')
+  const [selectedConditions, setSelectedConditions] = useState([])
+  const [otherCondition, setOtherCondition] = useState('')
   const [currentMedications, setCurrentMedications] = useState('')
-  const [chronicConditions, setChronicConditions] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -23,6 +41,9 @@ function ProfileSetup() {
     setLoading(true)
     setError('')
 
+    const allergiesList = [...selectedAllergies, ...(otherAllergy.trim() ? [otherAllergy.trim()] : [])]
+    const conditionsList = [...selectedConditions, ...(otherCondition.trim() ? [otherCondition.trim()] : [])]
+
     try {
       await axios.post(
         'http://127.0.0.1:8000/profile',
@@ -30,13 +51,13 @@ function ProfileSetup() {
           full_name: fullName,
           age: parseInt(age, 10),
           gender,
-          allergies,
+          allergies: allergiesList.join(', '),
           current_medications: currentMedications,
-          chronic_conditions: chronicConditions,
+          chronic_conditions: conditionsList.join(', '),
         },
         { headers: { Authorization: `Bearer ${token}` } }
       )
-      markProfileComplete()
+      markProfileComplete(fullName)
       navigate('/')
     } catch (err) {
       setError(t('errorGeneric'))
@@ -54,7 +75,7 @@ function ProfileSetup() {
         {t('profileSetupSubtitle')}
       </p>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3 max-w-md">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5 max-w-md">
         <input
           type="text"
           placeholder={t('profileFullName')}
@@ -103,36 +124,54 @@ function ProfileSetup() {
           </select>
         </div>
 
-        <textarea
-          placeholder={t('profileAllergies')}
-          value={allergies}
-          onChange={(e) => setAllergies(e.target.value)}
-          rows={2}
-          className="border border-slate-300 dark:border-slate-600
-                     bg-white dark:bg-slate-800
-                     text-slate-900 dark:text-slate-100
-                     placeholder:text-slate-400 dark:placeholder:text-slate-500
-                     rounded p-2
-                     focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-        />
+        <div>
+          <MultiSelectDropdown
+            label={t('profileAllergiesLabel')}
+            options={ALLERGY_OPTIONS}
+            selected={selectedAllergies}
+            onChange={setSelectedAllergies}
+            placeholder={t('profileAllergiesPlaceholder')}
+          />
+          <input
+            type="text"
+            placeholder={t('profileOtherAllergy')}
+            value={otherAllergy}
+            onChange={(e) => setOtherAllergy(e.target.value)}
+            className="border border-slate-300 dark:border-slate-600
+                       bg-white dark:bg-slate-800
+                       text-slate-900 dark:text-slate-100
+                       placeholder:text-slate-400 dark:placeholder:text-slate-500
+                       rounded p-2 mt-2 w-full text-sm
+                       focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+          />
+        </div>
+
+        <div>
+          <MultiSelectDropdown
+            label={t('profileConditionsLabel')}
+            options={CONDITION_OPTIONS}
+            selected={selectedConditions}
+            onChange={setSelectedConditions}
+            placeholder={t('profileConditionsPlaceholder')}
+          />
+          <input
+            type="text"
+            placeholder={t('profileOtherCondition')}
+            value={otherCondition}
+            onChange={(e) => setOtherCondition(e.target.value)}
+            className="border border-slate-300 dark:border-slate-600
+                       bg-white dark:bg-slate-800
+                       text-slate-900 dark:text-slate-100
+                       placeholder:text-slate-400 dark:placeholder:text-slate-500
+                       rounded p-2 mt-2 w-full text-sm
+                       focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+          />
+        </div>
 
         <textarea
           placeholder={t('profileCurrentMedications')}
           value={currentMedications}
           onChange={(e) => setCurrentMedications(e.target.value)}
-          rows={2}
-          className="border border-slate-300 dark:border-slate-600
-                     bg-white dark:bg-slate-800
-                     text-slate-900 dark:text-slate-100
-                     placeholder:text-slate-400 dark:placeholder:text-slate-500
-                     rounded p-2
-                     focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-        />
-
-        <textarea
-          placeholder={t('profileChronicConditions')}
-          value={chronicConditions}
-          onChange={(e) => setChronicConditions(e.target.value)}
           rows={2}
           className="border border-slate-300 dark:border-slate-600
                      bg-white dark:bg-slate-800
