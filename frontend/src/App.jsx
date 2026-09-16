@@ -13,6 +13,7 @@ import History from './pages/History'
 import Reminders from './pages/Reminders'
 import { LanguageProvider, useLanguage } from './context/LanguageContext'
 import { ThemeProvider, useTheme } from './context/ThemeContext'
+const { isLoggedIn, email, fullName, logout } = useAuth()
 
 function Navbar() {
   const { isLoggedIn, email, logout } = useAuth()
@@ -54,7 +55,7 @@ function Navbar() {
       <span className="ml-auto flex gap-4 items-center">
         {isLoggedIn && (
           <>
-            <span className="text-sm text-teal-50">{email}</span>
+            <span className="text-sm text-teal-50">{fullName || email}</span>
             <button onClick={logout} className="hover:underline text-sm">{t('navLogout')}</button>
           </>
         )}

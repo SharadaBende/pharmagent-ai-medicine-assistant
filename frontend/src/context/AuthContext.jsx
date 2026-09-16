@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import axios from 'axios'
 
 const AuthContext = createContext(null)
 
@@ -8,6 +9,7 @@ export function AuthProvider({ children }) {
   const [profileComplete, setProfileComplete] = useState(
     localStorage.getItem('profileComplete') === 'true'
   )
+  const [fullName, setFullName] = useState(localStorage.getItem('fullName') || '')
 
   useEffect(() => {
     if (token) {
@@ -29,6 +31,30 @@ export function AuthProvider({ children }) {
     localStorage.setItem('profileComplete', profileComplete ? 'true' : 'false')
   }, [profileComplete])
 
+  useEffect(() => {
+    if (fullName) {
+      localStorage.setItem('fullName', fullName)
+    } else {
+      localStorage.removeItem('fullName')
+    }
+  }, [fullName])
+
+  // Whenever we know the profile is complete, fetch the name to display.
+  useEffect(() => {
+    if (token && profileComplete && !fullName) {
+      axios
+        .get('http://127.0.0.1:8000/profile', {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => {
+          if (res.data.exists) {
+            setFullName(res.data.full_name)
+          }
+        })
+        .catch(() => {})
+    }
+  }, [token, profileComplete])
+
   const login = (newToken, userEmail, isProfileComplete = false) => {
     setToken(newToken)
     setEmail(userEmail)
@@ -39,10 +65,12 @@ export function AuthProvider({ children }) {
     setToken(null)
     setEmail(null)
     setProfileComplete(false)
+    setFullName('')
   }
 
-  const markProfileComplete = () => {
+  const markProfileComplete = (name) => {
     setProfileComplete(true)
+    if (name) setFullName(name)
   }
 
   return (
@@ -55,6 +83,7 @@ export function AuthProvider({ children }) {
         isLoggedIn: !!token,
         profileComplete,
         markProfileComplete,
+        fullName,
       }}
     >
       {children}
