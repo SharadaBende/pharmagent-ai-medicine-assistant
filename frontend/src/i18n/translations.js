@@ -110,6 +110,8 @@ profileEditButton: 'Edit Profile',
 profileCancelButton: 'Cancel',
 profileCurrentMedicationsLabel: 'Current medications',
 profileNoneListed: 'None listed',
+notFoundMessage: "Sorry, that page doesn't exist.", 
+notFoundBackHome: 'Back to Home',
   },
   hi: {
     appName: 'फार्मएजेंट',
@@ -222,7 +224,8 @@ profileEditButton: 'प्रोफ़ाइल संपादित करे�
 profileCancelButton: 'रद्द करें',
 profileCurrentMedicationsLabel: 'वर्तमान दवाइयां',
 profileNoneListed: 'कोई सूचीबद्ध नहीं',
-
+notFoundMessage: 'क्षमा करें, यह पृष्ठ मौजूद नहीं है।', 
+notFoundBackHome: 'होम पर वापस जाएं',
 
 
   },
@@ -337,5 +340,7 @@ profileEditButton: 'प्रोफाइल संपादित करा',
 profileCancelButton: 'रद्द करा',
 profileCurrentMedicationsLabel: 'सध्याची औषधे',
 profileNoneListed: 'काहीही सूचीबद्ध नाही',
+notFoundMessage: 'क्षमस्व, हे पान अस्तित्वात नाही.', 
+notFoundBackHome: 'होमवर परत जा',
   },
 }

@@ -16,6 +16,7 @@ import { LanguageProvider } from './context/LanguageContext'
 import { ThemeProvider } from './context/ThemeContext'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import NotFound from './pages/NotFound'
 
 // Gates any route behind login + a completed profile.
 // Not logged in -> /signup. Logged in but no profile -> /profile-setup.
@@ -76,6 +77,7 @@ function App() {
         <Route path="/history" element={<RequireAuth><History /></RequireAuth>} />
         <Route path="/reminders" element={<RequireAuth><Reminders /></RequireAuth>} />
         <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
     <Footer />
