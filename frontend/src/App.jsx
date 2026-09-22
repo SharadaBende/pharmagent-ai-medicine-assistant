@@ -17,6 +17,7 @@ import { ThemeProvider } from './context/ThemeContext'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import NotFound from './pages/NotFound'
+import { ToastProvider } from './context/ToastContext'
 
 // Gates any route behind login + a completed profile.
 // Not logged in -> /signup. Logged in but no profile -> /profile-setup.
@@ -59,6 +60,7 @@ function App() {
   return (
     <ThemeProvider>
     <LanguageProvider>
+       <ToastProvider>
     <AuthProvider>
     <BrowserRouter>
   <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors">
@@ -84,6 +86,7 @@ function App() {
   </div>
 </BrowserRouter>
     </AuthProvider>
+     </ToastProvider>
     </LanguageProvider>
     </ThemeProvider>
 
