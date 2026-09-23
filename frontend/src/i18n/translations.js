@@ -114,6 +114,7 @@ notFoundMessage: "Sorry, that page doesn't exist.",
 notFoundBackHome: 'Back to Home',
 reminderAdded: 'Reminder added',
 reminderDeleted: 'Reminder deleted',
+historyLoadError: 'Could not load history.',
   },
   hi: {
     appName: 'फार्मएजेंट',
@@ -230,7 +231,7 @@ notFoundMessage: 'क्षमा करें, यह पृष्ठ मौज
 notFoundBackHome: 'होम पर वापस जाएं',
 reminderAdded: 'रिमाइंडर जोड़ा गया',
 reminderDeleted: 'रिमाइंडर हटाया गया',
-
+historyLoadError: 'इतिहास लोड नहीं हो सका।',
 
   },
   mr: {
@@ -348,5 +349,6 @@ notFoundMessage: 'क्षमस्व, हे पान अस्तित्�
 notFoundBackHome: 'होमवर परत जा',
 reminderAdded: 'रिमाइंडर जोडला गया',
 reminderDeleted: 'रिमाइंडर हटवला गेला',
+historyLoadError: 'इतिहास लोड करता आला नाही.',
   },
 }

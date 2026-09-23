@@ -3,13 +3,14 @@ import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 import { Link } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
+import { useToast } from '../context/ToastContext'
 
 function History() {
   const { token, isLoggedIn } = useAuth()
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
   const { t } = useLanguage()
+  const { showToast } = useToast()
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -22,7 +23,7 @@ function History() {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => setHistory(response.data))
-      .catch(() => setError('Could not load history.'))
+      .catch(() => showToast(t('historyLoadError'), 'error'))
       .finally(() => setLoading(false))
   }, [token, isLoggedIn])
 
@@ -50,7 +51,6 @@ function History() {
       </h1>
 
       {loading && <p className="text-slate-600 dark:text-slate-400">{t('historyLoading')}</p>}
-      {error && <p className="text-red-600 dark:text-red-400">{error}</p>}
 
       {!loading && history.length === 0 && (
         <p className="text-slate-600 dark:text-slate-400">{t('historyEmpty')}</p>
