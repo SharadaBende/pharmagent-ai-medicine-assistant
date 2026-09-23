@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import axios from 'axios'
 import { useLanguage } from '../context/LanguageContext'
+import { useAuth } from '../context/AuthContext'
 
 function Symptoms() {
   const [symptom, setSymptom] = useState('')
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const { t } = useLanguage()
+  const { token } = useAuth()
+  const { language, t } = useLanguage()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -16,9 +18,16 @@ function Symptoms() {
     setResult(null)
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/symptoms', {
-        symptom: symptom,
-      })
+      const response = await axios.post(
+        'http://127.0.0.1:8000/symptoms',
+        {
+          symptom: symptom,
+          language: language,
+        },
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        }
+      )
       setResult(response.data)
     } catch (err) {
       setError(t('errorGeneric'))
