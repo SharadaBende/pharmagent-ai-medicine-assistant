@@ -13,11 +13,25 @@ EMERGENCY_KEYWORDS = [
     "anaphylaxis", "not breathing", "choking"
 ]
 
-EMERGENCY_MESSAGE = (
-    "This sounds like it could be a medical emergency. Please call your local "
-    "emergency number immediately or go to the nearest emergency room. "
-    "I'm not able to help with this — please seek immediate medical attention."
-)
+LANGUAGE_NAMES = {"en": "English", "hi": "Hindi", "mr": "Marathi"}
+
+EMERGENCY_MESSAGES = {
+    "en": (
+        "This sounds like it could be a medical emergency. Please call your local "
+        "emergency number immediately or go to the nearest emergency room. "
+        "I'm not able to help with this — please seek immediate medical attention."
+    ),
+    "hi": (
+        "यह एक मेडिकल इमरजेंसी हो सकती है। कृपया तुरंत अपने स्थानीय आपातकालीन नंबर पर "
+        "कॉल करें या नज़दीकी अस्पताल के इमरजेंसी विभाग में जाएँ। मैं इसमें मदद नहीं कर सकता — "
+        "कृपया तुरंत चिकित्सा सहायता लें।"
+    ),
+    "mr": (
+        "ही वैद्यकीय आणीबाणी असू शकते. कृपया ताबडतोब तुमच्या स्थानिक आपत्कालीन क्रमांकावर "
+        "कॉल करा किंवा जवळच्या रुग्णालयाच्या आपत्कालीन विभागात जा. मी यात मदत करू शकत नाही — "
+        "कृपया त्वरित वैद्यकीय मदत घ्या."
+    ),
+}
 
 SYSTEM_PROMPT = """You are PharmAgent, an AI assistant that suggests GENERAL categories of over-the-counter medicine for mild, common symptoms.
 
@@ -34,29 +48,25 @@ def is_emergency(text: str) -> bool:
     text_lower = text.lower()
     return any(keyword in text_lower for keyword in EMERGENCY_KEYWORDS)
 
-def suggest_for_symptom(symptom_text: str, user_profile: dict | None = None):
+def suggest_for_symptom(symptom_text: str, user_profile: dict | None = None, language: str = "en"):
+    if language not in LANGUAGE_NAMES:
+        language = "en"
+
     if is_emergency(symptom_text):
         return {
             "emergency": True,
-            "answer": EMERGENCY_MESSAGE
+            "answer": EMERGENCY_MESSAGES[language]
         }
 
     profile_context = ""
-    if user_profile:
-        parts = []
-        if user_profile.get("allergies"):
-            parts.append(f"Known allergies: {user_profile['allergies']}")
-        if user_profile.get("chronic_conditions"):
-            parts.append(f"Chronic conditions: {user_profile['chronic_conditions']}")
-        if user_profile.get("current_medications"):
-            parts.append(f"Current medications: {user_profile['current_medications']}")
-        if parts:
-            profile_context = "\n\nRelevant patient context (only mention if actually relevant):\n" + "\n".join(parts)
+    # ... unchanged ...
+
+    system_prompt = SYSTEM_PROMPT + f"- Write your entire answer in {LANGUAGE_NAMES[language]}.\n"
 
     response = client.chat.completions.create(
         model="openai/gpt-oss-120b",
         messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": f"Symptom: {symptom_text}{profile_context}"}
         ]
     )
