@@ -115,6 +115,7 @@ notFoundBackHome: 'Back to Home',
 reminderAdded: 'Reminder added',
 reminderDeleted: 'Reminder deleted',
 historyLoadError: 'Could not load history.',
+loginInvalidError: 'Invalid email or password.',
   },
   hi: {
     appName: 'फार्मएजेंट',
@@ -232,6 +233,7 @@ notFoundBackHome: 'होम पर वापस जाएं',
 reminderAdded: 'रिमाइंडर जोड़ा गया',
 reminderDeleted: 'रिमाइंडर हटाया गया',
 historyLoadError: 'इतिहास लोड नहीं हो सका।',
+loginInvalidError: 'ईमेल या पासवर्ड गलत है।',
 
   },
   mr: {
@@ -350,5 +352,6 @@ notFoundBackHome: 'होमवर परत जा',
 reminderAdded: 'रिमाइंडर जोडला गया',
 reminderDeleted: 'रिमाइंडर हटवला गेला',
 historyLoadError: 'इतिहास लोड करता आला नाही.',
+loginInvalidError: 'ईमेल किंवा पासवर्ड चुकीचा आहे.',
   },
 }
