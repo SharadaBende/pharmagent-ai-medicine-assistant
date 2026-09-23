@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import axios from 'axios'
 import { useLanguage } from '../context/LanguageContext'
+import { useToast } from '../context/ToastContext'
 
 function Interactions() {
   const [drugs, setDrugs] = useState(['', ''])
   const [results, setResults] = useState(null)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const { language, t } = useLanguage()
+  const { t } = useLanguage()
+  const { showToast } = useToast()
 
   const updateDrug = (index, value) => {
     const updated = [...drugs]
@@ -29,12 +30,11 @@ function Interactions() {
     const filledDrugs = drugs.map((d) => d.trim()).filter(Boolean)
 
     if (filledDrugs.length < 2) {
-      setError(t('interactionsMinError'))
+      showToast(t('interactionsMinError'), 'error')
       return
     }
 
     setLoading(true)
-    setError('')
     setResults(null)
 
     try {
@@ -42,12 +42,12 @@ function Interactions() {
         drug_names: filledDrugs,
       })
       if (response.data.error) {
-        setError(response.data.error)
+        showToast(t('interactionsMinError'), 'error')
       } else {
         setResults(response.data.results)
       }
     } catch (err) {
-      setError(t('errorGeneric'))
+      showToast(t('errorGeneric'), 'error')
     } finally {
       setLoading(false)
     }
@@ -113,8 +113,6 @@ function Interactions() {
           {loading ? t('interactionsChecking') : t('interactionsCheckButton')}
         </button>
       </form>
-
-      {error && <p className="text-red-600 dark:text-red-400 mt-4">{error}</p>}
 
       {results && (
         <div className="mt-6 flex flex-col gap-3">
