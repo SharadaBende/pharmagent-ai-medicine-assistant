@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
+import { useToast } from '../context/ToastContext'
 import MultiSelectDropdown from '../components/MultiSelectDropdown'
 
 const ALLERGY_OPTIONS = [
@@ -45,11 +46,10 @@ const GENDER_LABELS = {
 function Profile() {
   const { token } = useAuth()
   const { t } = useLanguage()
+  const { showToast } = useToast()
 
   const [editing, setEditing] = useState(false)
   const [fetching, setFetching] = useState(true)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const [fullName, setFullName] = useState('')
@@ -82,7 +82,7 @@ function Profile() {
           setOtherCondition(conditionSplit.other)
         }
       })
-      .catch(() => setError(t('errorGeneric')))
+      .catch(() => showToast(t('errorGeneric'), 'error'))
       .finally(() => setFetching(false))
   }
 
@@ -93,8 +93,6 @@ function Profile() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
-    setError('')
-    setSuccess(false)
 
     const allergiesList = [...selectedAllergies, ...(otherAllergy.trim() ? [otherAllergy.trim()] : [])]
     const conditionsList = [...selectedConditions, ...(otherCondition.trim() ? [otherCondition.trim()] : [])]
@@ -112,10 +110,10 @@ function Profile() {
         },
         { headers: { Authorization: `Bearer ${token}` } }
       )
-      setSuccess(true)
+      showToast(t('profileUpdateSuccess'))
       setEditing(false)
     } catch (err) {
-      setError(t('errorGeneric'))
+      showToast(t('errorGeneric'), 'error')
     } finally {
       setLoading(false)
     }
@@ -132,10 +130,6 @@ function Profile() {
   if (!editing) {
     return (
       <div>
-        {success && (
-          <p className="text-teal-700 dark:text-teal-400 mb-4">{t('profileUpdateSuccess')}</p>
-        )}
-
         <div className="flex items-center gap-4 mb-6">
           <div className="w-16 h-16 rounded-full bg-amber-500 text-white font-semibold
                            flex items-center justify-center text-xl shrink-0">
@@ -212,8 +206,6 @@ function Profile() {
             {t('profileEditButton')}
           </button>
         </div>
-
-        {error && <p className="text-red-600 dark:text-red-400 mt-4">{error}</p>}
       </div>
     )
   }
@@ -352,8 +344,6 @@ function Profile() {
           </button>
         </div>
       </form>
-
-      {error && <p className="text-red-600 dark:text-red-400 mt-4">{error}</p>}
     </div>
   )
 }
