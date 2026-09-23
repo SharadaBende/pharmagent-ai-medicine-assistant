@@ -1,20 +1,20 @@
 import { useState } from 'react'
 import axios from 'axios'
 import { useLanguage } from '../context/LanguageContext'
+import { useToast } from '../context/ToastContext'
 
 function Ocr() {
   const [file, setFile] = useState(null)
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
   const { t } = useLanguage()
+  const { showToast } = useToast()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!file) return
 
     setLoading(true)
-    setError('')
     setResult(null)
 
     const formData = new FormData()
@@ -26,7 +26,7 @@ function Ocr() {
       })
       setResult(response.data)
     } catch (err) {
-      setError(t('errorGeneric'))
+      showToast(t('errorGeneric'), 'error')
     } finally {
       setLoading(false)
     }
@@ -61,8 +61,6 @@ function Ocr() {
           {loading ? t('ocrReading') : t('ocrButton')}
         </button>
       </form>
-
-      {error && <p className="text-red-600 dark:text-red-400 mt-4">{error}</p>}
 
       {result && (
         <div className="mt-6">
