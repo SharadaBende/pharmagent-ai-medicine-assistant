@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 import { Link } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
+import { useToast } from '../context/ToastContext'
 
 function Reminders() {
   const { token, isLoggedIn } = useAuth()
@@ -11,12 +12,12 @@ function Reminders() {
   const [dosageNote, setDosageNote] = useState('')
   const [timeOfDay, setTimeOfDay] = useState('')
   const [frequency, setFrequency] = useState('daily')
-  const [error, setError] = useState('')
   const [notifPermission, setNotifPermission] = useState(
     typeof Notification !== 'undefined' ? Notification.permission : 'unsupported'
   )
   const notifiedToday = useRef(new Set())
   const { t } = useLanguage()
+  const { showToast } = useToast()
 
   const authHeaders = { headers: { Authorization: `Bearer ${token}` } }
 
@@ -25,7 +26,7 @@ function Reminders() {
     axios
       .get('http://127.0.0.1:8000/reminders', authHeaders)
       .then((res) => setReminders(res.data))
-      .catch(() => setError(t('remindersLoadError')))
+      .catch(() => showToast(t('remindersLoadError'), 'error'))
   }
 
   useEffect(() => {
@@ -43,7 +44,7 @@ function Reminders() {
         const notifKey = `${r.id}-${todayKey}`
         if (r.time_of_day === currentTime && !notifiedToday.current.has(notifKey)) {
           notifiedToday.current.add(notifKey)
-          if (Notification.permission === 'granted') {
+          if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
             new Notification(`Time to take ${r.medicine_name}`, {
               body: r.dosage_note || 'Reminder from PharmAgent',
             })
@@ -61,7 +62,6 @@ function Reminders() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setError('')
 
     try {
       await axios.post(
@@ -73,8 +73,9 @@ function Reminders() {
       setDosageNote('')
       setTimeOfDay('')
       loadReminders()
+      showToast(t('reminderAdded'))
     } catch (err) {
-      setError(t('remindersCreateError'))
+      showToast(t('remindersCreateError'), 'error')
     }
   }
 
@@ -82,8 +83,9 @@ function Reminders() {
     try {
       await axios.delete(`http://127.0.0.1:8000/reminders/${id}`, authHeaders)
       loadReminders()
+      showToast(t('reminderDeleted'))
     } catch (err) {
-      setError(t('remindersDeleteError'))
+      showToast(t('remindersDeleteError'), 'error')
     }
   }
 
@@ -185,8 +187,6 @@ function Reminders() {
           {t('remindersAddButton')}
         </button>
       </form>
-
-      {error && <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>}
 
       <div className="flex flex-col gap-3">
         {reminders.length === 0 && (
