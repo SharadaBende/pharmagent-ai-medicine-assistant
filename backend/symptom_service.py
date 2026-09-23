@@ -7,10 +7,22 @@ load_dotenv()
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 EMERGENCY_KEYWORDS = [
+    # English
     "chest pain", "difficulty breathing", "can't breathe", "cannot breathe",
     "severe bleeding", "unconscious", "suicidal", "suicide", "overdose",
     "seizure", "stroke", "heart attack", "severe allergic reaction",
-    "anaphylaxis", "not breathing", "choking"
+    "anaphylaxis", "not breathing", "choking",
+
+    # Hindi
+    "सीने में दर्द", "सांस लेने में तकलीफ", "सांस लेने में दिक्कत",
+    "सांस नहीं आ", "बहुत खून बह", "बेहोश", "आत्महत्या", "ओवरडोज",
+    "दौरा पड़", "मिर्गी", "लकवा", "स्ट्रोक", "दिल का दौरा",
+    "हार्ट अटैक", "दम घुट",
+
+    # Marathi
+    "छातीत दुख", "श्वास घेण्यास त्रास", "श्वास घेता येत नाही",
+    "दम लागत", "खूप रक्तस्राव", "रक्तस्त्राव", "बेशुद्ध",
+    "ओव्हरडोस", "फिट आली", "पक्षाघात", "हृदयविकाराचा झटका", "गुदमरत",
 ]
 
 LANGUAGE_NAMES = {"en": "English", "hi": "Hindi", "mr": "Marathi"}
