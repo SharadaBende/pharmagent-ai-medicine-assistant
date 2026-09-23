@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
+import { useToast } from '../context/ToastContext'
 import MultiSelectDropdown from '../components/MultiSelectDropdown'
 
 const ALLERGY_OPTIONS = [
@@ -24,6 +25,7 @@ function ProfileSetup() {
   const { token, markProfileComplete } = useAuth()
   const navigate = useNavigate()
   const { t } = useLanguage()
+  const { showToast } = useToast()
 
   const [fullName, setFullName] = useState('')
   const [age, setAge] = useState('')
@@ -33,13 +35,11 @@ function ProfileSetup() {
   const [selectedConditions, setSelectedConditions] = useState([])
   const [otherCondition, setOtherCondition] = useState('')
   const [currentMedications, setCurrentMedications] = useState('')
-  const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
-    setError('')
 
     const allergiesList = [...selectedAllergies, ...(otherAllergy.trim() ? [otherAllergy.trim()] : [])]
     const conditionsList = [...selectedConditions, ...(otherCondition.trim() ? [otherCondition.trim()] : [])]
@@ -58,9 +58,10 @@ function ProfileSetup() {
         { headers: { Authorization: `Bearer ${token}` } }
       )
       markProfileComplete(fullName)
+      showToast(t('profileSaved'))
       navigate('/')
     } catch (err) {
-      setError(t('errorGeneric'))
+      showToast(t('errorGeneric'), 'error')
     } finally {
       setLoading(false)
     }
@@ -190,8 +191,6 @@ function ProfileSetup() {
           {loading ? t('profileSaving') : t('profileSaveButton')}
         </button>
       </form>
-
-      {error && <p className="text-red-600 dark:text-red-400 mt-4">{error}</p>}
     </div>
   )
 }
