@@ -3,37 +3,39 @@ import { useNavigate, Link } from 'react-router-dom'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
+import { useToast } from '../context/ToastContext'
 
 function Signup() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const { login } = useAuth()
   const navigate = useNavigate()
   const { t } = useLanguage()
-
-  
+  const { showToast } = useToast()
 
   const handleSubmit = async (e) => {
-  e.preventDefault()
-  setLoading(true)
-  setError('')
+    e.preventDefault()
+    setLoading(true)
 
-  try {
-    const response = await axios.post('http://127.0.0.1:8000/signup', { email, password })
-    if (response.data.error) {
-      setError(response.data.error)
-    } else {
-      login(response.data.access_token, email, response.data.profile_complete)
-      navigate('/profile-setup')
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/signup', { email, password })
+      if (response.data.error) {
+        showToast(t('signupEmailExistsError'), 'error')
+      } else {
+        login(response.data.access_token, email, response.data.profile_complete)
+        navigate('/profile-setup')
+      }
+    } catch (err) {
+      if (err.response?.status === 409) {
+        showToast(t('signupEmailExistsError'), 'error')
+      } else {
+        showToast(t('errorGeneric'), 'error')
+      }
+    } finally {
+      setLoading(false)
     }
-  } catch (err) {
-    setError(t('errorGeneric'))
-  } finally {
-    setLoading(false)
   }
-}
 
   return (
     <div>
@@ -77,7 +79,6 @@ function Signup() {
           {loading ? t('signupCreating') : t('signupButton')}
         </button>
       </form>
-      {error && <p className="text-red-600 dark:text-red-400 mt-4">{error}</p>}
       <p className="mt-4 text-sm text-slate-700 dark:text-slate-300">
         {t('signupHaveAccount')}{' '}
         <Link to="/login" className="text-teal-600 dark:text-teal-400 hover:underline">

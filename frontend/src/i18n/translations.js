@@ -116,6 +116,7 @@ reminderAdded: 'Reminder added',
 reminderDeleted: 'Reminder deleted',
 historyLoadError: 'Could not load history.',
 loginInvalidError: 'Invalid email or password.',
+signupEmailExistsError: 'An account with this email already exists.',
   },
   hi: {
     appName: 'फार्मएजेंट',
@@ -234,6 +235,7 @@ reminderAdded: 'रिमाइंडर जोड़ा गया',
 reminderDeleted: 'रिमाइंडर हटाया गया',
 historyLoadError: 'इतिहास लोड नहीं हो सका।',
 loginInvalidError: 'ईमेल या पासवर्ड गलत है।',
+signupEmailExistsError: 'इस ईमेल से एक खाता पहले से मौजूद है।',
 
   },
   mr: {
@@ -353,5 +355,6 @@ reminderAdded: 'रिमाइंडर जोडला गया',
 reminderDeleted: 'रिमाइंडर हटवला गेला',
 historyLoadError: 'इतिहास लोड करता आला नाही.',
 loginInvalidError: 'ईमेल किंवा पासवर्ड चुकीचा आहे.',
+signupEmailExistsError: 'या ईमेलने खाते आधीच अस्तित्वात आहे.',
   },
 }
