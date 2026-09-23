@@ -2,65 +2,65 @@ import { useState, useRef } from 'react'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
+import { useToast } from '../context/ToastContext'
 
 function Chat() {
   const [medicineName, setMedicineName] = useState('')
   const [question, setQuestion] = useState('')
   const [answer, setAnswer] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
   const { token } = useAuth()
   const [isListening, setIsListening] = useState(false)
   const recognitionRef = useRef(null)
   const { language, t } = useLanguage()
+  const { showToast } = useToast()
 
-const startListening = () => {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+  const startListening = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
 
-  if (!SpeechRecognition) {
-    alert('Voice input is not supported in this browser. Try Chrome.')
-    return
+    if (!SpeechRecognition) {
+      alert('Voice input is not supported in this browser. Try Chrome.')
+      return
+    }
+
+    const recognition = new SpeechRecognition()
+    recognition.lang = 'en-US'
+    recognition.interimResults = false
+    recognition.maxAlternatives = 1
+
+    recognition.onstart = () => setIsListening(true)
+    recognition.onend = () => setIsListening(false)
+    recognition.onerror = () => setIsListening(false)
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript
+      setQuestion((prev) => (prev ? prev + ' ' + transcript : transcript))
+    }
+
+    recognitionRef.current = recognition
+    recognition.start()
   }
-
-  const recognition = new SpeechRecognition()
-  recognition.lang = 'en-US'
-  recognition.interimResults = false
-  recognition.maxAlternatives = 1
-
-  recognition.onstart = () => setIsListening(true)
-  recognition.onend = () => setIsListening(false)
-  recognition.onerror = () => setIsListening(false)
-
-  recognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript
-    setQuestion((prev) => (prev ? prev + ' ' + transcript : transcript))
-  }
-
-  recognitionRef.current = recognition
-  recognition.start()
-}
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
-    setError('')
     setAnswer('')
 
     try {
       const response = await axios.post(
-  'http://127.0.0.1:8000/chat',
-  {
-    medicine_name: medicineName,
-    question: question,
-    language: language,
-  },
-  {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  }
-)
+        'http://127.0.0.1:8000/chat',
+        {
+          medicine_name: medicineName,
+          question: question,
+          language: language,
+        },
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        }
+      )
       setAnswer(response.data.answer)
     } catch (err) {
-      setError('Something went wrong. Please try again.')
+      showToast(t('errorGeneric'), 'error')
     } finally {
       setLoading(false)
     }
@@ -120,8 +120,6 @@ const startListening = () => {
           {loading ? t('chatAsking') : t('chatAskButton')}
         </button>
       </form>
-
-      {error && <p className="text-red-600 dark:text-red-400 mt-4">{error}</p>}
 
       {answer && (
         <div className="mt-6 bg-slate-100 dark:bg-slate-800
