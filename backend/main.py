@@ -94,11 +94,15 @@ class ReminderRequest(BaseModel):
     time_of_day: str
     frequency: str
 
+class SymptomRequest(BaseModel):
+    symptom: str
+    language: str = "en"
+
 
 @app.post("/symptoms")
 def symptoms(request: SymptomRequest, current_user: Optional[User] = Depends(get_optional_user)):
     user_profile = get_user_profile_dict(current_user.id) if current_user else None
-    return suggest_for_symptom(request.symptom, user_profile)
+    return suggest_for_symptom(request.symptom, user_profile, request.language)
 
 @app.post("/interactions")
 def interactions(request: InteractionRequest):
