@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { Link } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import { useToast } from '../context/ToastContext'
+import { API_URL } from '../api'
 
 function Reminders() {
   const { token, isLoggedIn } = useAuth()
@@ -24,7 +25,7 @@ function Reminders() {
   const loadReminders = () => {
     if (!isLoggedIn) return
     axios
-      .get('http://127.0.0.1:8000/reminders', authHeaders)
+      .get(`${API_URL}/reminders`, authHeaders)
       .then((res) => setReminders(res.data))
       .catch(() => showToast(t('remindersLoadError'), 'error'))
   }
@@ -65,7 +66,7 @@ function Reminders() {
 
     try {
       await axios.post(
-        'http://127.0.0.1:8000/reminders',
+        `${API_URL}/reminders`,
         { medicine_name: medicineName, dosage_note: dosageNote, time_of_day: timeOfDay, frequency },
         authHeaders
       )
@@ -81,7 +82,7 @@ function Reminders() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/reminders/${id}`, authHeaders)
+      await axios.delete(`${API_URL}/reminders/${id}`, authHeaders)
       loadReminders()
       showToast(t('reminderDeleted'))
     } catch (err) {
