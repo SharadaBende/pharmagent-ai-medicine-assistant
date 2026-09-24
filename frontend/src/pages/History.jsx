@@ -51,7 +51,26 @@ function History() {
         {t('historyTitle')}
       </h1>
 
-      {loading && <p className="text-slate-600 dark:text-slate-400">{t('historyLoading')}</p>}
+      {loading && (
+  <div className="flex flex-col gap-4" role="status" aria-label={t('historyLoading')}>
+    {[0, 1, 2].map((i) => (
+      <div
+        key={i}
+        className="border border-slate-200 dark:border-slate-700
+                   bg-white dark:bg-slate-800
+                   rounded-lg p-4 animate-pulse"
+      >
+        <div className="flex justify-between items-start">
+          <div className="h-4 w-1/3 rounded bg-slate-200 dark:bg-slate-700" />
+          <div className="h-3 w-24 rounded bg-slate-200 dark:bg-slate-700" />
+        </div>
+        <div className="h-3 w-2/3 rounded bg-slate-200 dark:bg-slate-700 mt-3" />
+        <div className="h-3 w-full rounded bg-slate-200 dark:bg-slate-700 mt-3" />
+        <div className="h-3 w-5/6 rounded bg-slate-200 dark:bg-slate-700 mt-2" />
+      </div>
+    ))}
+  </div>
+)}
 
       {!loading && history.length === 0 && (
         <p className="text-slate-600 dark:text-slate-400">{t('historyEmpty')}</p>
