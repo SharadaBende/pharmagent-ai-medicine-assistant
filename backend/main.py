@@ -127,16 +127,17 @@ def health_check():
     return {"status": "ok"}
 
 @app.post("/chat")
-def chat(request: ChatRequest, current_user: Optional[User] = Depends(get_optional_user)):
+@limiter.limit("20/minute")
+def chat(request: Request, payload: ChatRequest, current_user: Optional[User] = Depends(get_optional_user)):
     user_profile = get_user_profile_dict(current_user.id) if current_user else None
-    result = ask_about_medicine(request.question, request.medicine_name, request.language, user_profile)
+    result = ask_about_medicine(payload.question, payload.medicine_name, payload.language, user_profile)
 
     if current_user:
         db = SessionLocal()
         history_entry = MedicineHistory(
             user_id=current_user.id,
-            medicine_name=request.medicine_name,
-            question=request.question,
+            medicine_name=payload.medicine_name,
+            question=payload.question,
             answer=result.get("answer", ""),
             timestamp=datetime.utcnow().isoformat()
         )
