@@ -108,9 +108,10 @@ class SymptomRequest(BaseModel):
 
 
 @app.post("/symptoms")
-def symptoms(request: SymptomRequest, current_user: Optional[User] = Depends(get_optional_user)):
+@limiter.limit("20/minute")
+def symptoms(request: Request, payload: SymptomRequest, current_user: Optional[User] = Depends(get_optional_user)):
     user_profile = get_user_profile_dict(current_user.id) if current_user else None
-    return suggest_for_symptom(request.symptom, user_profile, request.language)
+    return suggest_for_symptom(payload.symptom, user_profile, payload.language)
 
 @app.post("/interactions")
 def interactions(request: InteractionRequest):
