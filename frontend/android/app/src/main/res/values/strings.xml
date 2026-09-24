@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">PharmAgent</string>
+    <string name="title_activity_main">PharmAgent</string>
+    <string name="package_name">com.sharada.pharmagent</string>
+    <string name="custom_url_scheme">com.sharada.pharmagent</string>
+</resources>
