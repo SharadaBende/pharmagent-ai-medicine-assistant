@@ -122,6 +122,21 @@ function Chat() {
         </button>
       </form>
 
+      {loading && (
+  <div
+    className="mt-6 bg-slate-100 dark:bg-slate-800
+               border border-slate-200 dark:border-slate-700
+               rounded p-4 animate-pulse"
+    role="status"
+    aria-label={t('chatAsking')}
+  >
+    <div className="h-3 w-full rounded bg-slate-200 dark:bg-slate-700" />
+    <div className="h-3 w-11/12 rounded bg-slate-200 dark:bg-slate-700 mt-3" />
+    <div className="h-3 w-4/5 rounded bg-slate-200 dark:bg-slate-700 mt-3" />
+    <div className="h-3 w-2/3 rounded bg-slate-200 dark:bg-slate-700 mt-3" />
+  </div>
+)}
+
       {answer && (
         <div className="mt-6 bg-slate-100 dark:bg-slate-800
                          text-slate-900 dark:text-slate-100
