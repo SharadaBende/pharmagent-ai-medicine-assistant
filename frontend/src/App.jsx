@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom'
 import Chat from './pages/Chat'
 import Interactions from './pages/Interactions'
 import Symptoms from './pages/Symptoms'
@@ -56,40 +56,57 @@ function RequireLogin({ children }) {
   return children
 }
 
+function WideLayout() {
+  return (
+    <div className="max-w-6xl mx-auto p-6 min-h-[70vh]">
+      <Outlet />
+    </div>
+  )
+}
+
+function NarrowLayout() {
+  return (
+    <div className="max-w-2xl mx-auto p-6 min-h-[70vh]">
+      <Outlet />
+    </div>
+  )
+}
+
 function App() {
   return (
     <ThemeProvider>
-    <LanguageProvider>
-       <ToastProvider>
-    <AuthProvider>
-    <BrowserRouter>
-  <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors">
-    <Navbar />
-    <div className="max-w-2xl mx-auto p-6 min-h-[70vh]">
-      <Routes>
-        <Route path="/login" element={<RedirectIfAuthed><Login /></RedirectIfAuthed>} />
-        <Route path="/signup" element={<RedirectIfAuthed><Signup /></RedirectIfAuthed>} />
-        <Route path="/profile-setup" element={<RequireLogin><ProfileSetup /></RequireLogin>} />
+      <LanguageProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <BrowserRouter>
+              <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors">
+                <Navbar />
+                <Routes>
+                  <Route element={<WideLayout />}>
+                    <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
+                  </Route>
 
-        <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
-        <Route path="/chat" element={<RequireAuth><Chat /></RequireAuth>} />
-        <Route path="/interactions" element={<RequireAuth><Interactions /></RequireAuth>} />
-        <Route path="/symptoms" element={<RequireAuth><Symptoms /></RequireAuth>} />
-        <Route path="/ocr" element={<RequireAuth><Ocr /></RequireAuth>} />
-        <Route path="/history" element={<RequireAuth><History /></RequireAuth>} />
-        <Route path="/reminders" element={<RequireAuth><Reminders /></RequireAuth>} />
-        <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </div>
-    <Footer />
-  </div>
-</BrowserRouter>
-    </AuthProvider>
-     </ToastProvider>
-    </LanguageProvider>
+                  <Route element={<NarrowLayout />}>
+                    <Route path="/login" element={<RedirectIfAuthed><Login /></RedirectIfAuthed>} />
+                    <Route path="/signup" element={<RedirectIfAuthed><Signup /></RedirectIfAuthed>} />
+                    <Route path="/profile-setup" element={<RequireLogin><ProfileSetup /></RequireLogin>} />
+                    <Route path="/chat" element={<RequireAuth><Chat /></RequireAuth>} />
+                    <Route path="/interactions" element={<RequireAuth><Interactions /></RequireAuth>} />
+                    <Route path="/symptoms" element={<RequireAuth><Symptoms /></RequireAuth>} />
+                    <Route path="/ocr" element={<RequireAuth><Ocr /></RequireAuth>} />
+                    <Route path="/history" element={<RequireAuth><History /></RequireAuth>} />
+                    <Route path="/reminders" element={<RequireAuth><Reminders /></RequireAuth>} />
+                    <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
+                    <Route path="*" element={<NotFound />} />
+                  </Route>
+                </Routes>
+                <Footer />
+              </div>
+            </BrowserRouter>
+          </AuthProvider>
+        </ToastProvider>
+      </LanguageProvider>
     </ThemeProvider>
-
   )
 }
 
