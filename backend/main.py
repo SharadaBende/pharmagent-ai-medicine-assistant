@@ -21,7 +21,11 @@ from datetime import datetime
 from interaction_service import check_multiple_interactions
 from database import Reminder
 from database import UserProfile
-
+from fastapi import HTTPException
+from fastapi import Request
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 
 
@@ -53,7 +57,11 @@ def get_optional_user(authorization: Optional[str] = Header(None)):
     return user
 
 
+limiter = Limiter(key_func=get_remote_address)
+
 app = FastAPI(title="PharmAgent AI Medicine Assistant")
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
@@ -158,7 +166,7 @@ def signup(request: SignupRequest):
     existing = db.query(User).filter(User.email == request.email).first()
     if existing:
         db.close()
-        return {"error": "An account with this email already exists."}
+        raise HTTPException(status_code=409, detail="An account with this email already exists.")
 
     new_user = User(
         email=request.email,
@@ -179,7 +187,7 @@ def login(request: LoginRequest):
     db.close()
 
     if not user or not verify_password(request.password, user.hashed_password):
-        return {"error": "Invalid email or password."}
+        raise HTTPException(status_code=401, detail="Invalid email or password.")
 
     token = create_access_token({"sub": request.email})
     return {
