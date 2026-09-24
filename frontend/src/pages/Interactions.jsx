@@ -2,6 +2,7 @@ import { useState } from 'react'
 import axios from 'axios'
 import { useLanguage } from '../context/LanguageContext'
 import { useToast } from '../context/ToastContext'
+import { API_URL } from '../api'
 
 function Interactions() {
   const [drugs, setDrugs] = useState(['', ''])
@@ -38,7 +39,7 @@ function Interactions() {
     setResults(null)
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/interactions/multi', {
+      const response = await axios.post(`${API_URL}/interactions/multi`, {
         drug_names: filledDrugs,
       })
       if (response.data.error) {
