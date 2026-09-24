@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
 import { useToast } from '../context/ToastContext'
+import { API_URL } from '../api'
 
 function Chat() {
   const [medicineName, setMedicineName] = useState('')
@@ -48,7 +49,7 @@ function Chat() {
 
     try {
       const response = await axios.post(
-        'http://127.0.0.1:8000/chat',
+        `${API_URL}/chat`,
         {
           medicine_name: medicineName,
           question: question,
