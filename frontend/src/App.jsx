@@ -56,9 +56,18 @@ function RequireLogin({ children }) {
   return children
 }
 
+// function WideLayout() {
+//   return (
+//     <div className="max-w-6xl mx-auto p-6 min-h-[70vh]">
+//       <Outlet />
+//     </div>
+//   )
+// }
+
+
 function WideLayout() {
   return (
-    <div className="max-w-6xl mx-auto p-6 min-h-[70vh]">
+    <div className="min-h-[70vh]">
       <Outlet />
     </div>
   )
