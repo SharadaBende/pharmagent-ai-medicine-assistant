@@ -2,6 +2,7 @@ import { useState } from 'react'
 import axios from 'axios'
 import { useLanguage } from '../context/LanguageContext'
 import { useToast } from '../context/ToastContext'
+import { API_URL } from '../api'
 
 function Ocr() {
   const [file, setFile] = useState(null)
@@ -21,7 +22,7 @@ function Ocr() {
     formData.append('file', file)
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/ocr', formData, {
+      const response = await axios.post(`${API_URL}/ocr`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
       setResult(response.data)
