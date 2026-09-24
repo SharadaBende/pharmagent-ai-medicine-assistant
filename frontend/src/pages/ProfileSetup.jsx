@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
 import { useToast } from '../context/ToastContext'
 import MultiSelectDropdown from '../components/MultiSelectDropdown'
+import { API_URL } from '../api'
 
 const ALLERGY_OPTIONS = [
   'Penicillin', 'Amoxicillin', 'Sulfa drugs', 'Aspirin', 'Ibuprofen / NSAIDs',
@@ -46,7 +47,7 @@ function ProfileSetup() {
 
     try {
       await axios.post(
-        'http://127.0.0.1:8000/profile',
+        `${API_URL}/profile`,
         {
           full_name: fullName,
           age: parseInt(age, 10),
