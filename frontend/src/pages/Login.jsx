@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
 import { useToast } from '../context/ToastContext'
+import { API_URL } from '../api'
 
 function Login() {
   const [email, setEmail] = useState('')
@@ -19,7 +20,7 @@ function Login() {
     setLoading(true)
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/login', { email, password })
+      const response = await axios.post(`${API_URL}/login`, { email, password })
       if (response.data.error) {
         showToast(t('loginInvalidError'), 'error')
       } else {
