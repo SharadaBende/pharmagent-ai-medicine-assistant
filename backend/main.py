@@ -116,14 +116,16 @@ def symptoms(request: Request, payload: SymptomRequest, current_user: Optional[U
     return suggest_for_symptom(payload.symptom, user_profile, payload.language)
 
 @app.post("/interactions")
-def interactions(request: InteractionRequest):
-    return check_drug_interaction(request.drug_a, request.drug_b)
+@limiter.limit("20/minute")
+def interactions(request: Request, payload: InteractionRequest):
+    return check_drug_interaction(payload.drug_a, payload.drug_b)
 
 @app.post("/interactions/multi")
-def multi_interactions(request: MultiInteractionRequest):
-    if len(request.drug_names) < 2:
+@limiter.limit("20/minute")
+def multi_interactions(request: Request, payload: MultiInteractionRequest):
+    if len(payload.drug_names) < 2:
         return {"error": "Please provide at least 2 medicines to check."}
-    return {"results": check_multiple_interactions(request.drug_names)}
+    return {"results": check_multiple_interactions(payload.drug_names)}
 
 @app.get("/health")
 def health_check():
