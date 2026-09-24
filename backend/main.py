@@ -26,6 +26,8 @@ from fastapi import Request
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
+import uuid
+from fastapi import HTTPException
 
 
 
@@ -148,16 +150,26 @@ def chat(request: Request, payload: ChatRequest, current_user: Optional[User] = 
 
     return result
 
+MAX_UPLOAD_BYTES = 5 * 1024 * 1024  # 5 MB
+
 @app.post("/ocr")
-async def ocr_prescription(file: UploadFile = File(...)):
-    temp_path = f"temp_{file.filename}"
+@limiter.limit("10/minute")
+async def ocr_prescription(request: Request, file: UploadFile = File(...)):
+    if not (file.content_type or "").startswith("image/"):
+        raise HTTPException(status_code=400, detail="Please upload an image.")
+
+    contents = await file.read()
+    if len(contents) > MAX_UPLOAD_BYTES:
+        raise HTTPException(status_code=413, detail="Image too large (max 5 MB).")
+
+    temp_path = f"temp_{uuid.uuid4().hex}.img"
     with open(temp_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+        buffer.write(contents)
 
     try:
         result = process_prescription_image(temp_path)
     finally:
-        os.remove(temp_path)  # clean up temp file regardless of success/failure
+        os.remove(temp_path)  # clean up regardless of success/failure
 
     return result
 
