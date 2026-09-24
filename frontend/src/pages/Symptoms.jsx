@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useLanguage } from '../context/LanguageContext'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
+import { API_URL } from '../api'
 
 function Symptoms() {
   const [symptom, setSymptom] = useState('')
@@ -19,7 +20,7 @@ function Symptoms() {
 
     try {
       const response = await axios.post(
-        'http://127.0.0.1:8000/symptoms',
+        `${API_URL}/symptoms`,
         {
           symptom: symptom,
           language: language,
