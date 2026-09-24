@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { Link } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import { useToast } from '../context/ToastContext'
+import { API_URL } from '../api'
 
 function History() {
   const { token, isLoggedIn } = useAuth()
@@ -19,7 +20,7 @@ function History() {
     }
 
     axios
-      .get('http://127.0.0.1:8000/history', {
+      .get(`${API_URL}/history`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => setHistory(response.data))
