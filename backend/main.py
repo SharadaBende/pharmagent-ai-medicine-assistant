@@ -4,7 +4,7 @@ import shutil
 import os
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from chat_service import ask_about_medicine
 from interaction_service import check_drug_interaction
 from symptom_service import suggest_for_symptom
@@ -90,7 +90,7 @@ class SymptomRequest(BaseModel):
 
 class SignupRequest(BaseModel):
     email: str
-    password: str
+    password: str = Field(min_length=8, max_length=128)
 
 class LoginRequest(BaseModel):
     email: str
@@ -109,6 +109,15 @@ class ReminderRequest(BaseModel):
 class SymptomRequest(BaseModel):
     symptom: str
     language: str = "en"
+
+
+class ProfileRequest(BaseModel):
+    full_name: str = Field(min_length=1, max_length=100)
+    age: int = Field(ge=0, le=120)
+    gender: str
+    allergies: str = Field(default="", max_length=1000)
+    current_medications: str = Field(default="", max_length=1000)
+    chronic_conditions: str = Field(default="", max_length=1000)
 
 
 @app.post("/symptoms")
@@ -297,16 +306,6 @@ def delete_reminder(reminder_id: int, current_user: User = Depends(get_current_u
     db.close()
     return {"deleted": True}
 
-
-
-
-class ProfileRequest(BaseModel):
-    full_name: str
-    age: int
-    gender: str
-    allergies: str = ""
-    current_medications: str = ""
-    chronic_conditions: str = ""
 
 
 def has_profile(user_id: int) -> bool:
