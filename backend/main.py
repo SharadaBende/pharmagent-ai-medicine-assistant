@@ -161,23 +161,24 @@ async def ocr_prescription(file: UploadFile = File(...)):
 
 
 @app.post("/signup")
-def signup(request: SignupRequest):
+@limiter.limit("5/minute")
+def signup(request: Request, payload: SignupRequest):
     db = SessionLocal()
-    existing = db.query(User).filter(User.email == request.email).first()
+    existing = db.query(User).filter(User.email == payload.email).first()
     if existing:
         db.close()
-        raise HTTPException(status_code=409, detail="An account with this email already exists.")
+        return {"error": "An account with this email already exists."}
 
     new_user = User(
-        email=request.email,
-        hashed_password=hash_password(request.password)
+        email=payload.email,
+        hashed_password=hash_password(payload.password)
     )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
     db.close()
 
-    token = create_access_token({"sub": request.email})
+    token = create_access_token({"sub": payload.email})
     return {"access_token": token, "token_type": "bearer", "profile_complete": False}
 
 @app.post("/login")
