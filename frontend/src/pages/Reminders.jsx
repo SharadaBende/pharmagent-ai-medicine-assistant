@@ -12,6 +12,7 @@ function Reminders() {
   const [medicineName, setMedicineName] = useState('')
   const [dosageNote, setDosageNote] = useState('')
   const [timeOfDay, setTimeOfDay] = useState('')
+  const [loadingList, setLoadingList] = useState(true)
   const [frequency, setFrequency] = useState('daily')
   const [notifPermission, setNotifPermission] = useState(
     typeof Notification !== 'undefined' ? Notification.permission : 'unsupported'
@@ -28,6 +29,7 @@ function Reminders() {
       .get(`${API_URL}/reminders`, authHeaders)
       .then((res) => setReminders(res.data))
       .catch(() => showToast(t('remindersLoadError'), 'error'))
+      .finally(() => setLoadingList(false))
   }
 
   useEffect(() => {
@@ -190,10 +192,28 @@ function Reminders() {
       </form>
 
       <div className="flex flex-col gap-3">
-        {reminders.length === 0 && (
-          <p className="text-slate-600 dark:text-slate-400">{t('remindersEmpty')}</p>
-        )}
-        {reminders.map((r) => (
+  {loadingList && (
+    <div className="flex flex-col gap-3" role="status" aria-label={t('remindersLoading')}>
+      {[0, 1, 2].map((i) => (
+        <div
+          key={i}
+          className="border border-slate-200 dark:border-slate-700
+                     bg-white dark:bg-slate-800
+                     rounded-lg p-4 flex justify-between items-center animate-pulse"
+        >
+          <div className="flex-1">
+            <div className="h-4 w-1/3 rounded bg-slate-200 dark:bg-slate-700" />
+            <div className="h-3 w-2/3 rounded bg-slate-200 dark:bg-slate-700 mt-3" />
+          </div>
+          <div className="h-3 w-12 rounded bg-slate-200 dark:bg-slate-700" />
+        </div>
+      ))}
+    </div>
+  )}
+  {!loadingList && reminders.length === 0 && (
+    <p className="text-slate-600 dark:text-slate-400">{t('remindersEmpty')}</p>
+  )}
+  {reminders.map((r) => (
           <div
             key={r.id}
             className="border border-slate-200 dark:border-slate-700

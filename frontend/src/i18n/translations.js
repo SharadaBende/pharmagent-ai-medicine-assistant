@@ -118,6 +118,7 @@ historyLoadError: 'Could not load history.',
 loginInvalidError: 'Invalid email or password.',
 signupEmailExistsError: 'An account with this email already exists.',
 profileSaved: 'Profile saved',
+remindersLoading: 'Loading reminders',
   },
   hi: {
     appName: 'फार्मएजेंट',
@@ -238,6 +239,7 @@ historyLoadError: 'इतिहास लोड नहीं हो सका।
 loginInvalidError: 'ईमेल या पासवर्ड गलत है।',
 signupEmailExistsError: 'इस ईमेल से एक खाता पहले से मौजूद है।',
 profileSaved: 'प्रोफ़ाइल सहेजी गई',
+remindersLoading: 'रिमाइंडर लोड हो रहे हैं',
 
   },
   mr: {
@@ -359,5 +361,6 @@ historyLoadError: 'इतिहास लोड करता आला नाह
 loginInvalidError: 'ईमेल किंवा पासवर्ड चुकीचा आहे.',
 signupEmailExistsError: 'या ईमेलने खाते आधीच अस्तित्वात आहे.',
 profileSaved: 'प्रोफाइल जतन केली',
+remindersLoading: 'रिमाइंडर लोड होत आहेत',
   },
 }
