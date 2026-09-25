@@ -59,7 +59,7 @@ function Navbar() {
   ]
 
   return (
-    <nav className="bg-teal-600 dark:bg-teal-800 text-white">
+    <nav className="bg-teal-600 dark:bg-teal-800 text-white shadow-md sticky top-0 z-30">
       <div className="p-4 flex items-center gap-4">
         {isLoggedIn && (
           <button
@@ -71,7 +71,12 @@ function Navbar() {
           </button>
         )}
 
-        <span className="font-bold text-lg">{t('appName')}</span>
+        <div className="flex items-center gap-2">
+  <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center text-lg">
+    💊
+  </div>
+  <span className="font-bold text-lg tracking-tight">{t('appName')}</span>
+</div>
 
         {isLoggedIn && (
           <div className="hidden md:flex gap-6 items-center">
