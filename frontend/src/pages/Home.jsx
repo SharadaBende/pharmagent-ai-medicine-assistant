@@ -98,6 +98,46 @@ function Home() {
           {t('homeDisclaimer')}
         </div>
       </section>
+            {/* Trust strip */}
+      <section className="max-w-6xl mx-auto px-6 py-8
+                          grid gap-4 sm:grid-cols-3 text-sm">
+        <div className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
+          <span className="text-xl">✅</span> {t('homeTrustVerified')}
+        </div>
+        <div className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
+          <span className="text-xl">🌐</span> {t('homeTrustLanguages')}
+        </div>
+        <div className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
+          <span className="text-xl">🚨</span> {t('homeTrustEmergency')}
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="max-w-6xl mx-auto px-6 py-12">
+        <h2 className="text-2xl font-bold mb-6 text-slate-900 dark:text-slate-100">
+          {t('homeHowHeading')}
+        </h2>
+        <div className="grid gap-6 sm:grid-cols-3">
+          {[
+            { n: '1', titleKey: 'homeHowStep1Title', descKey: 'homeHowStep1Desc' },
+            { n: '2', titleKey: 'homeHowStep2Title', descKey: 'homeHowStep2Desc' },
+            { n: '3', titleKey: 'homeHowStep3Title', descKey: 'homeHowStep3Desc' },
+          ].map((step) => (
+            <div key={step.n}>
+              <div className="w-9 h-9 rounded-full bg-teal-600 text-white font-semibold
+                              flex items-center justify-center mb-3">
+                {step.n}
+              </div>
+              <div className="font-semibold text-slate-900 dark:text-slate-100">
+                {t(step.titleKey)}
+              </div>
+              <div className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                {t(step.descKey)}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   )
 }
