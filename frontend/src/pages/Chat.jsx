@@ -69,10 +69,15 @@ function Chat() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4 text-slate-900 dark:text-slate-100">
-        {t('chatTitle')}
-      </h1>
-
+     <div className="flex items-center gap-3 mb-6">
+  <div className="w-11 h-11 rounded-lg bg-teal-50 dark:bg-teal-950/40
+                  flex items-center justify-center text-2xl shrink-0">
+    💬
+  </div>
+  <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+    {t('chatTitle')}
+  </h1>
+</div>
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <input
           type="text"
