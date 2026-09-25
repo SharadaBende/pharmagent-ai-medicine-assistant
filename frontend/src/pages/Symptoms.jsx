@@ -39,9 +39,15 @@ function Symptoms() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4 text-slate-900 dark:text-slate-100">
-        {t('symptomsTitle')}
-      </h1>
+      <div className="flex items-center gap-3 mb-6">
+  <div className="w-11 h-11 rounded-lg bg-teal-50 dark:bg-teal-950/40
+                  flex items-center justify-center text-2xl shrink-0">
+    🩺
+  </div>
+  <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+    {t('symptomsTitle')}
+  </h1>
+</div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <textarea
@@ -66,6 +72,21 @@ function Symptoms() {
           {loading ? t('symptomsChecking') : t('symptomsButton')}
         </button>
       </form>
+
+      {loading && (
+  <div
+    className="mt-6 bg-slate-100 dark:bg-slate-800
+               border-2 border-slate-200 dark:border-slate-700
+               rounded p-4 animate-pulse"
+    role="status"
+    aria-label={t('symptomsChecking')}
+  >
+    <div className="h-3 w-full rounded bg-slate-200 dark:bg-slate-700" />
+    <div className="h-3 w-11/12 rounded bg-slate-200 dark:bg-slate-700 mt-3" />
+    <div className="h-3 w-4/5 rounded bg-slate-200 dark:bg-slate-700 mt-3" />
+    <div className="h-3 w-2/3 rounded bg-slate-200 dark:bg-slate-700 mt-3" />
+  </div>
+)}
 
       {result && (
         <div
