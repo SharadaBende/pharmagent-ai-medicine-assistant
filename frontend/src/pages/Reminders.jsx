@@ -95,9 +95,15 @@ function Reminders() {
   if (!isLoggedIn) {
     return (
       <div>
-        <h1 className="text-2xl font-bold mb-4 text-slate-900 dark:text-slate-100">
-          {t('remindersPageTitle')}
-        </h1>
+        <div className="flex items-center gap-3 mb-4">
+  <div className="w-11 h-11 rounded-lg bg-teal-50 dark:bg-teal-950/40
+                  flex items-center justify-center text-2xl shrink-0">
+    ⏰
+  </div>
+  <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+    {t('remindersPageTitle')}
+  </h1>
+</div>
         <p className="text-slate-700 dark:text-slate-300">
           {t('remindersLoginPromptPrefix')}{' '}
           <Link to="/login" className="text-teal-600 dark:text-teal-400 hover:underline">
@@ -111,9 +117,15 @@ function Reminders() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4 text-slate-900 dark:text-slate-100">
-        {t('remindersPageTitle')}
-      </h1>
+      <div className="flex items-center gap-3 mb-4">
+  <div className="w-11 h-11 rounded-lg bg-teal-50 dark:bg-teal-950/40
+                  flex items-center justify-center text-2xl shrink-0">
+    ⏰
+  </div>
+  <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+    {t('remindersPageTitle')}
+  </h1>
+</div>
 
       {notifPermission !== 'granted' && notifPermission !== 'unsupported' && (
         <div className="bg-amber-50 dark:bg-amber-950/40
