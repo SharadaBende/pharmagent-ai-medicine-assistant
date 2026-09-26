@@ -30,6 +30,8 @@ function Signup() {
     } catch (err) {
       if (err.response?.status === 409) {
         showToast(t('signupEmailExistsError'), 'error')
+      } else if (err.response?.status === 429) {
+        showToast(t('errorRateLimit'), 'error')
       } else {
         showToast(t('errorGeneric'), 'error')
       }

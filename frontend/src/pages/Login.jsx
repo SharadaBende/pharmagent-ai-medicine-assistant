@@ -30,6 +30,8 @@ function Login() {
     } catch (err) {
       if (err.response?.status === 401) {
         showToast(t('loginInvalidError'), 'error')
+      } else if (err.response?.status === 429) {
+        showToast(t('errorRateLimit'), 'error')
       } else {
         showToast(t('errorGeneric'), 'error')
       }

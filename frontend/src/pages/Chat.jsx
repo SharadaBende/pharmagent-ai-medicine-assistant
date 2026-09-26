@@ -62,8 +62,12 @@ recognition.lang = SPEECH_LANGS[language] || 'en-US'
       )
       setAnswer(response.data.answer)
     } catch (err) {
-      showToast(t('errorGeneric'), 'error')
-    } finally {
+  if (err.response?.status === 429) {
+    showToast(t('errorRateLimit'), 'error')
+  } else {
+    showToast(t('errorGeneric'), 'error')
+  }
+} finally {
       setLoading(false)
     }
   }
