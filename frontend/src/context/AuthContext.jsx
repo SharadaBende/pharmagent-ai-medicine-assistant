@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import axios from 'axios'
+import { API_URL } from '../api'
 
 const AuthContext = createContext(null)
 
@@ -43,7 +44,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     if (token && profileComplete && !fullName) {
       axios
-        .get('http://127.0.0.1:8000/profile', {
+        .get(`${API_URL}/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {

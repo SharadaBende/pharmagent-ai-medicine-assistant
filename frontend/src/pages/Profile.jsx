@@ -45,7 +45,7 @@ const GENDER_LABELS = {
 }
 
 function Profile() {
-  const { token } = useAuth()
+  const { token, markProfileComplete } = useAuth()
   const { t } = useLanguage()
   const { showToast } = useToast()
 
@@ -111,8 +111,9 @@ function Profile() {
         },
         { headers: { Authorization: `Bearer ${token}` } }
       )
-      showToast(t('profileUpdateSuccess'))
-      setEditing(false)
+      markProfileComplete(fullName)
+  showToast(t('profileUpdateSuccess'))
+  setEditing(false)
     } catch (err) {
       showToast(t('errorGeneric'), 'error')
     } finally {
