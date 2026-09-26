@@ -39,53 +39,72 @@ function Signup() {
   }
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4 text-slate-900 dark:text-slate-100">
-        {t('signupTitle')}
-      </h1>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3 max-w-sm">
-        <input
-          type="email"
-          placeholder={t('loginEmailPlaceholder')}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="border border-slate-300 dark:border-slate-600
-                     bg-white dark:bg-slate-800
-                     text-slate-900 dark:text-slate-100
-                     placeholder:text-slate-400 dark:placeholder:text-slate-500
-                     rounded p-2
-                     focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-          required
-        />
-        <input
-          type="password"
-          placeholder={t('signupPasswordPlaceholder')}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="border border-slate-300 dark:border-slate-600
-                     bg-white dark:bg-slate-800
-                     text-slate-900 dark:text-slate-100
-                     placeholder:text-slate-400 dark:placeholder:text-slate-500
-                     rounded p-2
-                     focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-          minLength={8}
-          required
-        />
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-teal-600 hover:bg-teal-700 text-white rounded p-2 font-semibold
-                     disabled:opacity-50 transition"
-        >
-          {loading ? t('signupCreating') : t('signupButton')}
-        </button>
-      </form>
-      <p className="mt-4 text-sm text-slate-700 dark:text-slate-300">
-        {t('signupHaveAccount')}{' '}
-        <Link to="/login" className="text-teal-600 dark:text-teal-400 hover:underline">
-          {t('signupLoginLink')}
-        </Link>
-      </p>
+    <div className="min-h-[70vh] flex items-center justify-center
+                    -mx-6 px-6 py-10
+                    bg-gradient-to-br from-teal-50 via-white to-amber-50
+                    dark:from-slate-800 dark:via-slate-900 dark:to-slate-900">
+      <div className="w-full max-w-sm bg-white dark:bg-slate-800
+                      border border-slate-200 dark:border-slate-700
+                      rounded-2xl shadow-lg p-8">
+        <div className="flex items-center gap-2 mb-6 justify-center">
+          <div className="w-9 h-9 rounded-lg bg-teal-600 text-white
+                          flex items-center justify-center text-lg">
+            💊
+          </div>
+          <span className="font-bold text-lg text-slate-900 dark:text-slate-100">
+            {t('appName')}
+          </span>
+        </div>
+
+        <h1 className="text-xl font-bold mb-6 text-center text-slate-900 dark:text-slate-100">
+          {t('signupTitle')}
+        </h1>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+          <input
+            type="email"
+            placeholder={t('loginEmailPlaceholder')}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="border border-slate-300 dark:border-slate-600
+                       bg-white dark:bg-slate-900
+                       text-slate-900 dark:text-slate-100
+                       placeholder:text-slate-400 dark:placeholder:text-slate-500
+                       rounded-lg p-2.5
+                       focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+            required
+          />
+          <input
+            type="password"
+            placeholder={t('signupPasswordPlaceholder')}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="border border-slate-300 dark:border-slate-600
+                       bg-white dark:bg-slate-900
+                       text-slate-900 dark:text-slate-100
+                       placeholder:text-slate-400 dark:placeholder:text-slate-500
+                       rounded-lg p-2.5
+                       focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+            minLength={8}
+            required
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-teal-600 hover:bg-teal-700 text-white rounded-lg p-2.5 font-semibold
+                       disabled:opacity-50 transition mt-1"
+          >
+            {loading ? t('signupCreating') : t('signupButton')}
+          </button>
+        </form>
+
+        <p className="mt-5 text-sm text-center text-slate-700 dark:text-slate-300">
+          {t('signupHaveAccount')}{' '}
+          <Link to="/login" className="text-teal-600 dark:text-teal-400 hover:underline font-medium">
+            {t('signupLoginLink')}
+          </Link>
+        </p>
+      </div>
     </div>
   )
 }
