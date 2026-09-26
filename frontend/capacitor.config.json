@@ -1,5 +1,9 @@
 {
   "appId": "com.sharada.pharmagent",
   "appName": "PharmAgent",
-  "webDir": "dist"
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "http",
+    "cleartext": true
+  }
 }

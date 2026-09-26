@@ -148,6 +148,7 @@ homeHowStep3Desc: 'Get clear, cautious guidance, with a nudge to see a doctor or
 footerTagline: 'General information only. Not a substitute for professional medical advice.',
 footerLinksHeading: 'Quick links',
 footerRights: 'All rights reserved.',
+errorRateLimit: 'Too many requests. Please wait a minute and try again.',
   },
   hi: {
     appName: 'फार्मएजेंट',
@@ -298,6 +299,7 @@ homeHowStep3Desc: 'स्पष्ट, सतर्क सलाह पाएं
 footerTagline: 'केवल सामान्य जानकारी। पेशेवर चिकित्सा सलाह का विकल्प नहीं।',
 footerLinksHeading: 'त्वरित लिंक',
 footerRights: 'सर्वाधिकार सुरक्षित।',
+errorRateLimit: 'बहुत अधिक अनुरोध। कृपया एक मिनट रुककर पुनः प्रयास करें।',
   },
   mr: {
     appName: 'फार्मएजंट',
@@ -448,5 +450,6 @@ homeHowStep3Desc: 'स्पष्ट, सावध मार्गदर्श�
 footerTagline: 'फक्त सामान्य माहिती. व्यावसायिक वैद्यकीय सल्ल्याला पर्याय नाही.',
 footerLinksHeading: 'द्रुत दुवे',
 footerRights: 'सर्व हक्क राखीव.',
+errorRateLimit: 'खूप जास्त विनंत्या. कृपया एक मिनिट थांबून पुन्हा प्रयत्न करा.',
   },
 }
