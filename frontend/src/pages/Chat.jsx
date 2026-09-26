@@ -25,7 +25,8 @@ function Chat() {
     }
 
     const recognition = new SpeechRecognition()
-    recognition.lang = 'en-US'
+    const SPEECH_LANGS = { en: 'en-IN', hi: 'hi-IN', mr: 'mr-IN' }
+recognition.lang = SPEECH_LANGS[language] || 'en-US'
     recognition.interimResults = false
     recognition.maxAlternatives = 1
 
