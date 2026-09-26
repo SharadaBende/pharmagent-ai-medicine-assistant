@@ -4,6 +4,26 @@ PharmAgent is an AI-powered medicine assistant that answers medicine questions, 
 
 > **Disclaimer:** PharmAgent gives general information only and is not a substitute for professional medical advice. Always consult a doctor or pharmacist before taking any medicine.
 
+## Screenshots
+
+**Home**
+
+![Home hero](screenshots/home1.png)
+![Home features](screenshots/home2.png)
+![Home how it works](screenshots/home3.png)
+
+**Chat**
+
+![Chat](screenshots/chat.png)
+
+**Symptom Checker**
+
+![Symptoms](screenshots/symptoms.png)
+
+**Light mode**
+
+![Light mode](screenshots/lightmode.png)
+
 ## Features
 
 - **Chat Q&A** — ask questions about common medicines, grounded in verified drug data and the user's saved allergies/conditions
