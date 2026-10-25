@@ -32,7 +32,7 @@ def find_known_medicines_in_text(text: str, threshold: int = 80):
             found.append({
                 "generic_name": med.generic_name,
                 "brand_name": med.brand_name,
-                "purpose": med.purpose,
+                "purpose": med.purpose or med.indications,
                 "verified_dosage": med.dosage,
                 "warnings": med.warnings,
                 "match_confidence": best_score
@@ -55,7 +55,7 @@ def find_known_medicines_in_text(text: str, threshold: int = 80):
             found.append({
                 "generic_name": live_result.generic_name,
                 "brand_name": live_result.brand_name,
-                "purpose": live_result.purpose,
+                "purpose": live_result.purpose or live_result.indications,
                 "verified_dosage": live_result.dosage,
                 "warnings": live_result.warnings,
                 "match_confidence": 100  # exact OpenFDA match, not fuzzy
