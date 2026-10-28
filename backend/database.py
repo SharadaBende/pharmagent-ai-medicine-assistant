@@ -12,6 +12,11 @@ DRUG_SYNONYMS = {
     "crocin": "acetaminophen",
     "brufen": "ibuprofen",
     "combiflam": "ibuprofen",
+    "salbutamol": "albuterol",
+    "atorvastatin": "atorvastatin calcium",
+    "levothyroxine": "levothyroxine sodium",
+    "pseudoephedrine": "pseudoephedrine hydrochloride",
+    "loperamide": "loperamide hydrochloride",
 }
 
 def resolve_synonym(name: str) -> str:
@@ -131,9 +136,16 @@ def fetch_and_cache_medicine(db, name: str):
             return " ".join(value)
         return value or ""
 
+    # --- NEW: avoid inserting a duplicate row ---
+    generic = ", ".join(openfda.get("generic_name", [name_clean]))
+    existing = db.query(Medicine).filter(Medicine.generic_name.ilike(generic)).first()
+    if existing:
+        return existing
+    # --- END NEW ---
+
     medicine = Medicine(
         brand_name=", ".join(openfda.get("brand_name", [])),
-        generic_name=", ".join(openfda.get("generic_name", [name_clean])),
+        generic_name=generic,
         purpose=extract_field("purpose"),
         indications=extract_field("indications_and_usage"),
         dosage=extract_field("dosage_and_administration"),
