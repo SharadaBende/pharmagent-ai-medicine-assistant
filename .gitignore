@@ -13,3 +13,5 @@ dist/
 .DS_Store
 backend/pharmagent.db
 backend/test_prescription.png
+backend/ml/medicine_vectors.npy
+backend/ml/medicine_meta.csv
